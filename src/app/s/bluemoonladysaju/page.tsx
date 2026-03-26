@@ -214,7 +214,32 @@ function BluemoonContent() {
                 className="w-full font-pretendard text-base font-medium leading-none tracking-[-2.5%] placeholder:font-normal placeholder:text-[#757575] focus:outline-none h-10 border-b border-b-[#E1E1E1] bg-transparent px-1 text-white rounded-none"
                 placeholder="0000.00.00"
                 value={birthDate}
-                onChange={(e) => setBirthDate(e.target.value)}
+                maxLength={10}
+                onChange={(e) => {
+                  let v = e.target.value.replace(/[^0-9]/g, "");
+                  if (v.length > 8) v = v.slice(0, 8);
+                  // 자동으로 . 삽입
+                  if (v.length > 4) v = v.slice(0, 4) + "." + v.slice(4);
+                  if (v.length > 7) v = v.slice(0, 7) + "." + v.slice(7);
+                  // 유효성: 년도 1900~2025, 월 01~12, 일 01~31
+                  const parts = v.split(".");
+                  if (parts[0] && parts[0].length === 4) {
+                    const y = parseInt(parts[0]);
+                    if (y > 2025) { parts[0] = "2025"; v = parts.join("."); }
+                    if (y < 1900 && parts[0].length === 4) { parts[0] = "1900"; v = parts.join("."); }
+                  }
+                  if (parts[1] && parts[1].length === 2) {
+                    const m = parseInt(parts[1]);
+                    if (m > 12) { parts[1] = "12"; v = parts.join("."); }
+                    if (m < 1 && parts[1] !== "0") { parts[1] = "01"; v = parts.join("."); }
+                  }
+                  if (parts[2] && parts[2].length === 2) {
+                    const d = parseInt(parts[2]);
+                    if (d > 31) { parts[2] = "31"; v = parts.join("."); }
+                    if (d < 1 && parts[2] !== "0") { parts[2] = "01"; v = parts.join("."); }
+                  }
+                  setBirthDate(v);
+                }}
               />
             </div>
 
