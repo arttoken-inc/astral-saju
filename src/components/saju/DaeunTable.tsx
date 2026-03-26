@@ -1,16 +1,21 @@
-import { sajuResult, daeunTable } from "@/data/bluemoonladysaju";
+import type { SajuData, DaeunData, Decorations } from "@/lib/serviceConfig";
 import SajuCard from "./SajuCard";
 
-export default function DaeunTable() {
-  const d = daeunTable;
+interface DaeunTableProps {
+  data: SajuData;
+  daeun: DaeunData;
+  decorations: Decorations;
+}
+
+export default function DaeunTable({ data, daeun: d, decorations }: DaeunTableProps) {
   return (
-    <SajuCard>
+    <SajuCard decorations={decorations}>
       <div className="px-6 py-10">
         <h3 className="text-center font-gapyeong text-xl font-bold leading-none text-[#111111]">
-          {sajuResult.name}님의 대운표
+          {data.name}님의 대운표
         </h3>
         <p className="mt-2 text-center font-pretendard text-xs">
-          {sajuResult.nameShort}님의 대운주기는{" "}
+          {data.nameShort}님의 대운주기는{" "}
           <span className="font-semibold">
             {d.startAge}세부터 시작해 {d.cycle}년 주기
           </span>
