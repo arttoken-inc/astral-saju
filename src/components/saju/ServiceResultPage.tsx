@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect, useRef } from "react";
 import type { ServiceConfig, ResultSection } from "@/lib/serviceConfig";
 import { replaceTemplate } from "@/lib/templateReplace";
 import SajuTable from "./SajuTable";
@@ -204,11 +205,77 @@ function SectionRenderer({ section, config, vars }: { section: ResultSection; co
   }
 }
 
+function StickyPaymentBar({ visible, buttonColor, buttonText }: { visible: boolean; buttonColor: string; buttonText: string }) {
+  const [time, setTime] = useState({ h: 10, m: 31, s: 47, ms: 78 });
+
+  useEffect(() => {
+    if (!visible) return;
+    const interval = setInterval(() => {
+      setTime((prev) => {
+        let { h, m, s, ms } = prev;
+        ms -= 1;
+        if (ms < 0) { ms = 99; s -= 1; }
+        if (s < 0) { s = 59; m -= 1; }
+        if (m < 0) { m = 59; h -= 1; }
+        if (h < 0) return { h: 0, m: 0, s: 0, ms: 0 };
+        return { h, m, s, ms };
+      });
+    }, 10);
+    return () => clearInterval(interval);
+  }, [visible]);
+
+  const pad = (n: number) => String(n).padStart(2, "0");
+
+  return (
+    <div
+      className={`sticky bottom-0 z-40 w-full bg-[#000000]/80 px-4 py-4 font-pretendard transition-all duration-300 ${
+        visible ? "translate-y-0 opacity-100" : "translate-y-full opacity-0 pointer-events-none"
+      }`}
+    >
+      <div className="mb-3 flex items-center justify-center gap-1 text-center text-sm text-white">
+        <div>할인혜택 종료까지</div>
+        <div className="w-[5.125rem] text-start font-bold text-[#FDE047]">
+          {pad(time.h)}:{pad(time.m)}:{pad(time.s)}:{pad(time.ms)}
+        </div>
+      </div>
+      <button
+        className="flex h-12 w-full cursor-pointer items-center justify-center rounded-[0.625rem] px-2.5 py-3 text-center font-pretendard text-xl font-semibold text-white"
+        style={{ backgroundColor: buttonColor }}
+      >
+        {buttonText}
+      </button>
+      <div className="h-safe-bottom" />
+    </div>
+  );
+}
+
 export default function ServiceResultPage({ config }: { config: ServiceConfig }) {
   const vars = {
     name: config.sampleData.nameShort,
     characterName: config.meta.characterName,
   };
+
+  const [showPaymentBar, setShowPaymentBar] = useState(false);
+  const triggerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!triggerRef.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShowPaymentBar(true);
+        }
+      },
+      { threshold: 0.1 }
+    );
+    observer.observe(triggerRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  // 트리거 위치: speech-bubble 섹션 (운명의 짝 전에 나타나는 말풍선)
+  const triggerIndex = config.resultPage.sections.findIndex(
+    (s) => s.type === "speech-bubble"
+  );
 
   return (
     <>
@@ -216,9 +283,17 @@ export default function ServiceResultPage({ config }: { config: ServiceConfig })
       <main className="mx-auto max-w-md pt-[3.75rem]">
         <div style={{ backgroundColor: config.colors.resultBg }}>
           {config.resultPage.sections.map((section, i) => (
-            <SectionRenderer key={i} section={section} config={config} vars={vars} />
+            <div key={i}>
+              {i === triggerIndex && <div ref={triggerRef} />}
+              <SectionRenderer section={section} config={config} vars={vars} />
+            </div>
           ))}
         </div>
+        <StickyPaymentBar
+          visible={showPaymentBar}
+          buttonColor={config.colors.cardAccent}
+          buttonText={`${config.meta.serviceTitle} 지금 받아보기`}
+        />
       </main>
     </>
   );
