@@ -13,7 +13,9 @@
     "compare": "bun run scripts/compare.ts"
   },
   "dependencies": {
+    "@auth/core": "^0.34.3",
     "next": "16.2.1",
+    "next-auth": "^5.0.0-beta.30",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "swiper": "^12.1.3"
