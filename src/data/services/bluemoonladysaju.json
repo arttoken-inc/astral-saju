@@ -2,8 +2,8 @@
   "meta": {
     "serviceId": "bluemoonladysaju",
     "characterName": "청월",
-    "serviceTitle": "청월의 사주",
-    "pageTitle": "청월의 사주 | AI 운세 도사"
+    "serviceTitle": "청월아씨 정통사주",
+    "pageTitle": "청월아씨 정통사주 - 청월당 프리미엄 사주 웹툰 | 청월당 사주"
   },
   "colors": {
     "primary": "#04336D",
@@ -136,31 +136,35 @@
         "image": "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/result/result_0.png",
         "texts": [
           {
-            "content": "{name}",
+            "content": "{name}님,\n만나서 반가워요,",
             "style": {
               "left": "29%",
-              "top": "36.1%"
+              "top": "36.1%",
+              "transform": "translateX(-50%) translateY(-50%)"
             }
           },
           {
-            "content": "{name}",
+            "content": "지금부터 {name}님의\n사주를 풀어드릴\n{characterName}이라고 합니다.",
             "style": {
               "right": "34.4%",
-              "top": "46.8%"
+              "top": "46.8%",
+              "transform": "translateX(50%) translateY(-50%)"
             }
           },
           {
-            "content": "{name}",
+            "content": "{name}님과 제가\n이렇게 인연이 닿아",
             "style": {
               "left": "39.5%",
-              "bottom": "12.4%"
+              "bottom": "12.4%",
+              "transform": "translateX(-50%) translateY(50%)"
             }
           },
           {
-            "content": "{name}",
+            "content": "이야기를\n풀어드리게 되어\n정말 기쁘네요",
             "style": {
               "right": "31.3%",
-              "bottom": "5.5%"
+              "bottom": "5.5%",
+              "transform": "translateX(50%) translateY(50%)"
             }
           }
         ]
@@ -174,23 +178,24 @@
         "image": "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/result/result_2.png",
         "texts": [
           {
-            "content": "{name}",
+            "content": "먼저 제가\n{name}님의 사주를\n보기 쉽게 정리했어요",
             "style": {
               "right": "34.6%",
-              "top": "16.8%"
+              "top": "16.8%",
+              "transform": "translateX(50%) translateY(-50%)"
             }
           }
         ]
       },
       {
         "type": "saju-table",
-        "className": "mt-36",
+        "className": "relative mt-36",
         "bubbleImage": "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/result/result_bubble_0.png",
         "bubbleWidth": "252px"
       },
       {
         "type": "daeun-table",
-        "className": "mt-40",
+        "className": "relative mt-40",
         "bubbleImages": [
           "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/result/result_bubble_1.png",
           "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/result/result_bubble_2.png"
@@ -202,7 +207,7 @@
       },
       {
         "type": "ohaeng",
-        "className": "mb-10 mt-80",
+        "className": "relative mb-10 mt-80",
         "bubbleImage": "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/result/result_bubble_3.png",
         "bubbleWidth": "288px"
       },
@@ -211,28 +216,30 @@
         "image": "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/result/result_3.png",
         "texts": [
           {
-            "content": "{name}",
+            "content": "조금 비밀스러운\n이야기지만,",
             "style": {
               "right": "34.6%",
-              "top": "28.9%"
+              "top": "28.9%",
+              "transform": "translateX(50%) translateY(-50%)"
             }
           },
           {
-            "content": "{name}",
+            "content": "{name}님의 사주에는\n이런 내용들이\n보이네요",
             "style": {
               "right": "34.5%",
-              "bottom": "9.4%"
+              "bottom": "9.4%",
+              "transform": "translateX(50%) translateY(50%)"
             }
           }
         ]
       },
       {
         "type": "speech-bubble",
-        "text": "애정운, 결혼운, 이성운, 궁합 등 {name}님의 연애사주를 알려드릴게요."
+        "text": "애정운에서는 {name}님이 앞으로 만나게 될\n운명의 짝이 보이고.."
       },
       {
         "type": "destiny-partner",
-        "title": "{name}님의 운명의 상대"
+        "title": "{name}님의 운명의 짝"
       },
       {
         "type": "spacer",
@@ -240,9 +247,9 @@
       },
       {
         "type": "wealth-graph",
-        "className": "mb-10 mt-28 px-3",
-        "speechBubble": "{name}님의 재물운 흐름이에요.",
-        "title": "{name}님의 재물운 그래프"
+        "className": "relative mb-10 mt-28 px-3",
+        "speechBubble": "{name}님이 앞으로 얼마나 많은 재물을\n잃거나 얻게 될지도 보이고요,",
+        "title": "{name}님의 시기별 재산"
       },
       {
         "type": "image",
@@ -250,18 +257,19 @@
       },
       {
         "type": "crisis-list",
-        "title": "{name}님이 조심해야 할 위기",
-        "className": "mx-6 p-2 shadow-md -mt-16 mb-12"
+        "title": "{name}님에게 찾아올 위기",
+        "className": "relative mx-6 p-2 shadow-md -mt-16 mb-12"
       },
       {
         "type": "image-with-text",
         "image": "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/result/result_5.png",
         "texts": [
           {
-            "content": "{name}",
+            "content": "이 밖에도 {name}님께\n드릴 말씀이\n정말 많으니,",
             "style": {
               "right": "35.2%",
-              "top": "12%"
+              "top": "12%",
+              "transform": "translateX(50%) translateY(-50%)"
             }
           }
         ]
@@ -271,10 +279,11 @@
         "image": "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/result/result_6.png",
         "texts": [
           {
-            "content": "{name}",
+            "content": "\"오직 {name}님 만을 위해\n준비된 이야기\"",
             "style": {
               "left": "50%",
-              "top": "15.9%"
+              "top": "15.9%",
+              "transform": "translateX(-50%) translateY(-50%)"
             }
           }
         ]
