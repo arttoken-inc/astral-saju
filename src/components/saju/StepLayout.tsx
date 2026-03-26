@@ -8,7 +8,7 @@ interface StepLayoutProps {
   videoPoster?: string;
   children: ReactNode;
   buttons: ReactNode;
-  topGradient?: { height: number; from: string };
+  topGradient?: { height: number; from?: string };
   bottomGradient?: { height: number };
   stepIndicator?: { current: number; total: number };
   headerContent?: ReactNode;

@@ -6,6 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "cf:build": "opennextjs-cloudflare build",
+    "cf:dev": "wrangler dev",
+    "cf:deploy": "wrangler deploy",
     "lint": "eslint",
     "compare": "bun run scripts/compare.ts"
   },
@@ -16,6 +19,7 @@
     "swiper": "^12.1.3"
   },
   "devDependencies": {
+    "@opennextjs/cloudflare": "^1.17.3",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
@@ -24,7 +28,8 @@
     "eslint-config-next": "16.2.1",
     "playwright": "^1.58.2",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "wrangler": "^4.77.0"
   },
   "ignoreScripts": [
     "sharp",
