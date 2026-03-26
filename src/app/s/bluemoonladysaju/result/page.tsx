@@ -54,16 +54,16 @@ export default function ResultPage() {
           {/* 1. result_0 + 인사 텍스트 */}
           <div className="relative">
             <img className="w-full" alt="result_0" src={resultImages[0]} />
-            <p className="absolute whitespace-nowrap text-center text-base min-[354px]:text-lg min-[396px]:text-xl min-[438px]:text-[1.375rem] min-[438px]:leading-[1.5] font-gapyeong text-[#111111]" style={{ top: "36%", left: "50%", transform: "translateX(-50%)" }}>
+            <p className="absolute whitespace-nowrap text-center text-base min-[354px]:text-lg min-[396px]:text-xl min-[438px]:text-[1.375rem] min-[438px]:leading-[1.5] font-gapyeong text-[#111111]" style={{ left: "29%", top: "36.1%", transform: "translateX(-50%) translateY(-50%)" }}>
               {n}님,<br />만나서 반가워요,
             </p>
-            <p className="absolute whitespace-nowrap text-center text-base min-[354px]:text-lg min-[396px]:text-xl min-[438px]:text-[1.375rem] min-[438px]:leading-[1.5] font-gapyeong text-[#111111]" style={{ top: "47%", left: "50%", transform: "translateX(-50%)" }}>
+            <p className="absolute whitespace-nowrap text-center text-base min-[354px]:text-lg min-[396px]:text-xl min-[438px]:text-[1.375rem] min-[438px]:leading-[1.5] font-gapyeong text-[#111111]" style={{ right: "34.4%", top: "46.8%", transform: "translateX(50%) translateY(-50%)" }}>
               지금부터 {n}님의<br />사주를 풀어드릴<br />청월이라고 합니다.
             </p>
-            <p className="absolute whitespace-nowrap text-center text-base min-[354px]:text-lg min-[396px]:text-xl min-[438px]:text-[1.375rem] min-[438px]:leading-[1.5] font-gapyeong text-[#111111]" style={{ top: "84%", left: "50%", transform: "translateX(-50%)" }}>
+            <p className="absolute whitespace-nowrap text-center text-base min-[354px]:text-lg min-[396px]:text-xl min-[438px]:text-[1.375rem] min-[438px]:leading-[1.5] font-gapyeong text-[#111111]" style={{ left: "39.5%", bottom: "12.4%", transform: "translateX(-50%) translateY(50%)" }}>
               {n}님과 제가<br />이렇게 인연이 닿아
             </p>
-            <p className="absolute whitespace-nowrap text-center text-base min-[354px]:text-lg min-[396px]:text-xl min-[438px]:text-[1.375rem] min-[438px]:leading-[1.5] font-gapyeong text-[#111111]" style={{ top: "89%", left: "50%", transform: "translateX(-50%)" }}>
+            <p className="absolute whitespace-nowrap text-center text-base min-[354px]:text-lg min-[396px]:text-xl min-[438px]:text-[1.375rem] min-[438px]:leading-[1.5] font-gapyeong text-[#111111]" style={{ right: "31.3%", bottom: "5.5%", transform: "translateX(50%) translateY(50%)" }}>
               이야기를<br />풀어드리게 되어<br />정말 기쁘네요
             </p>
           </div>
@@ -74,7 +74,7 @@ export default function ResultPage() {
           {/* 3. result_2 + 텍스트 */}
           <div className="relative">
             <img className="w-full" alt="result_2" src={resultImages[2]} />
-            <p className="absolute whitespace-nowrap text-center text-base min-[354px]:text-lg min-[396px]:text-xl min-[438px]:text-[1.375rem] min-[438px]:leading-[1.5] font-gapyeong text-[#111111]" style={{ top: "70%", left: "50%", transform: "translateX(-50%)" }}>
+            <p className="absolute whitespace-nowrap text-center text-base min-[354px]:text-lg min-[396px]:text-xl min-[438px]:text-[1.375rem] min-[438px]:leading-[1.5] font-gapyeong text-[#111111]" style={{ right: "34.6%", top: "16.8%", transform: "translateX(50%) translateY(-50%)" }}>
               먼저 제가<br />{n}님의 사주를<br />보기 쉽게 정리했어요
             </p>
           </div>
@@ -123,10 +123,10 @@ export default function ResultPage() {
           {/* 7. result_3 + 텍스트 */}
           <div className="relative">
             <img className="w-full" alt="result_3" src={resultImages[3]} />
-            <p className="absolute whitespace-nowrap text-center text-base min-[354px]:text-lg min-[396px]:text-xl min-[438px]:text-[1.375rem] min-[438px]:leading-[1.5] font-gapyeong text-[#111111]" style={{ top: "35%", left: "50%", transform: "translateX(-50%)" }}>
+            <p className="absolute whitespace-nowrap text-center text-base min-[354px]:text-lg min-[396px]:text-xl min-[438px]:text-[1.375rem] min-[438px]:leading-[1.5] font-gapyeong text-[#111111]" style={{ right: "34.6%", top: "28.9%", transform: "translateX(50%) translateY(-50%)" }}>
               조금 비밀스러운<br />이야기지만,
             </p>
-            <p className="absolute whitespace-nowrap text-center text-base min-[354px]:text-lg min-[396px]:text-xl min-[438px]:text-[1.375rem] min-[438px]:leading-[1.5] font-gapyeong text-[#111111]" style={{ top: "70%", left: "50%", transform: "translateX(-50%)" }}>
+            <p className="absolute whitespace-nowrap text-center text-base min-[354px]:text-lg min-[396px]:text-xl min-[438px]:text-[1.375rem] min-[438px]:leading-[1.5] font-gapyeong text-[#111111]" style={{ right: "34.5%", bottom: "9.4%", transform: "translateX(50%) translateY(50%)" }}>
               {n}님의 사주에는<br />이런 내용들이<br />보이네요
             </p>
           </div>
@@ -228,7 +228,7 @@ export default function ResultPage() {
           {/* 14. result_5 + 텍스트 */}
           <div className="relative">
             <img className="w-full" alt="result_5" src={resultImages[5]} />
-            <p className="absolute whitespace-nowrap text-center text-base min-[354px]:text-lg min-[396px]:text-xl min-[438px]:text-[1.375rem] min-[438px]:leading-[1.5] font-gapyeong text-[#111111]" style={{ top: "60%", left: "50%", transform: "translateX(-50%)" }}>
+            <p className="absolute whitespace-nowrap text-center text-base min-[354px]:text-lg min-[396px]:text-xl min-[438px]:text-[1.375rem] min-[438px]:leading-[1.5] font-gapyeong text-[#111111]" style={{ right: "35.2%", top: "12%", transform: "translateX(50%) translateY(-50%)" }}>
               이 밖에도 {n}님께<br />드릴 말씀이<br />정말 많으니,
             </p>
           </div>
@@ -236,7 +236,7 @@ export default function ResultPage() {
           {/* 15. result_6 + 텍스트 */}
           <div className="relative">
             <img className="w-full" alt="result_6" src={resultImages[6]} />
-            <p className="absolute whitespace-nowrap text-center text-base min-[354px]:text-lg min-[396px]:text-xl min-[438px]:text-[1.375rem] min-[438px]:leading-[1.5] font-gapyeong text-[#111111]" style={{ top: "60%", left: "50%", transform: "translateX(-50%)" }}>
+            <p className="absolute whitespace-nowrap text-center text-base min-[354px]:text-lg min-[396px]:text-xl min-[438px]:text-[1.375rem] min-[438px]:leading-[1.5] font-gapyeong text-[#111111]" style={{ left: "50%", top: "15.9%", transform: "translateX(-50%) translateY(-50%)" }}>
               &quot;오직 {n}님 만을 위해<br />준비된 이야기&quot;
             </p>
           </div>
