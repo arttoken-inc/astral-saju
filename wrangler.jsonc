@@ -1,6 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "astral-saju",
+  "account_id": "ca4daa80914d0e682e1195712a660a20",
   "compatibility_date": "2025-04-01",
   "compatibility_flags": ["nodejs_compat"],
   "main": ".open-next/worker.js",
