@@ -49,7 +49,7 @@ export default function ResultPage() {
   return (
     <>
       <ResultHeader />
-      <main className="pt-[3.75rem]">
+      <main className="mx-auto max-w-md pt-[3.75rem]">
         <div className="bg-[#F3F2EF]">
           {/* 1. result_0 + 인사 텍스트 */}
           <div className="relative">
