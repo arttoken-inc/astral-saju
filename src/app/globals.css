@@ -1,5 +1,42 @@
-@import "tailwindcss";
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css");
+@import url("https://fonts.googleapis.com/css2?family=Zen+Antique&display=swap");
+
+@import "tailwindcss";
+
+@font-face {
+  font-family: "GapyeongHanseokbong";
+  src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/2411-3@1.0/GapyeongHanseokbong.woff2")
+    format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "GyeonggiBatang";
+  src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/2411-3@1.0/GyeonggiBatangR.woff2")
+    format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "GyeonggiBatang";
+  src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/2411-3@1.0/GyeonggiBatangB.woff2")
+    format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme inline {
+  --font-pretendard: "Pretendard Variable", "Noto Sans KR", "Apple SD Gothic Neo",
+    "맑은 고딕", "Malgun Gothic", sans-serif;
+  --font-gapyeong: "GapyeongHanseokbong", serif;
+  --font-zenantique: "Zen Antique", serif;
+  --font-gyeonggibatang: "GyeonggiBatang", serif;
+}
 
 :root {
   --background: #ffffff;
