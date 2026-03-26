@@ -5,16 +5,34 @@
 
 @font-face {
   font-family: "GapyeongHanseokbong";
-  src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/2411-3@1.0/GapyeongHanseokbong.woff2")
+  src: url("https://cdn.jsdelivr.net/gh/fonts-archive/GapyeongHanseokbong/GapyeongHanseokbong-Light.woff2")
     format("woff2");
-  font-weight: normal;
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "GapyeongHanseokbong";
+  src: url("https://cdn.jsdelivr.net/gh/fonts-archive/GapyeongHanseokbong/GapyeongHanseokbong-Regular.woff2")
+    format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "GapyeongHanseokbong";
+  src: url("https://cdn.jsdelivr.net/gh/fonts-archive/GapyeongHanseokbong/GapyeongHanseokbong-Bold.woff2")
+    format("woff2");
+  font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
   font-family: "GyeonggiBatang";
-  src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/2411-3@1.0/GyeonggiBatangR.woff2")
+  src: url("https://cdn.jsdelivr.net/gh/fonts-archive/GyeonggiBatang/GyeonggiBatang-Regular.woff2")
     format("woff2");
   font-weight: 400;
   font-style: normal;
@@ -23,7 +41,7 @@
 
 @font-face {
   font-family: "GyeonggiBatang";
-  src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/2411-3@1.0/GyeonggiBatangB.woff2")
+  src: url("https://cdn.jsdelivr.net/gh/fonts-archive/GyeonggiBatang/GyeonggiBatang-Bold.woff2")
     format("woff2");
   font-weight: 700;
   font-style: normal;
@@ -33,7 +51,7 @@
 @theme inline {
   --font-pretendard: "Pretendard Variable", "Noto Sans KR", "Apple SD Gothic Neo",
     "맑은 고딕", "Malgun Gothic", sans-serif;
-  --font-gapyeong: "GapyeongHanseokbong", serif;
+  --font-gapyeong: "GapyeongHanseokbong", "Noto Serif KR", serif;
   --font-zenantique: "Zen Antique", serif;
   --font-gyeonggibatang: "GyeonggiBatang", serif;
 }
