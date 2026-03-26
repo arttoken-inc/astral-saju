@@ -15,14 +15,11 @@ export const stepImages = {
 
 // 결과 이미지
 export const resultImages = Array.from({ length: 19 }, (_, i) => {
-  const suffix =
-    i === 7 || i === 17 ? "?v=20260114" : i === 10 ? "_251024" : "";
-  const name = i === 10 ? `result_10${suffix}` : `result_${i}${suffix}`;
-  return `${BASE}/result/${name}.png`;
+  if (i === 7) return `${BASE}/result/result_7.png?v=20260114`;
+  if (i === 10) return `${BASE}/result/result_10_251024.png`;
+  if (i === 17) return `${BASE}/result/result_17.png?v=20260114`;
+  return `${BASE}/result/result_${i}.png`;
 });
-
-// result_10은 특수 이름
-resultImages[10] = `${BASE}/result/result_10_251024.png`;
 
 export const resultBubbleImages = [
   `${BASE}/result/result_bubble_0.png`,
