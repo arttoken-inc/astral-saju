@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import type { ServiceConfig, Step, FormField, FormStep } from "@/lib/serviceConfig";
 import StepLayout, { PrevButton, CTAButton } from "./StepLayout";
@@ -10,6 +10,8 @@ import TimeSelectField from "./fields/TimeSelectField";
 import ButtonGroupField from "./fields/ButtonGroupField";
 import SelectField from "./fields/SelectField";
 import TextareaField from "./fields/TextareaField";
+
+const TRANSITION_MS = 400;
 
 function SajuHeader() {
   return (
@@ -29,6 +31,11 @@ function SajuHeader() {
   );
 }
 
+function resolveStepId(stepParam: string | null): string {
+  if (!stepParam) return "home";
+  return stepParam.replace("step_", "");
+}
+
 function StepContent({ config }: { config: ServiceConfig }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -36,29 +43,74 @@ function StepContent({ config }: { config: ServiceConfig }) {
 
   const baseUrl = `/s/${config.meta.serviceId}`;
   const steps = config.steps;
-  const currentStep = steps.find((s) =>
-    stepParam ? s.id === stepParam.replace("step_", "") || `step_${s.id}` === stepParam : s.id === "home"
-  ) ?? steps[0];
+
+  // Internal step state (not derived from URL)
+  const [currentStepId, setCurrentStepId] = useState(() => resolveStepId(stepParam));
+  const [opacity, setOpacity] = useState(1);
+  const isTransitioning = useRef(false);
 
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [calendarType, setCalendarType] = useState<"solar" | "lunar">("solar");
   const [unknownTime, setUnknownTime] = useState(false);
 
+  // Sync from URL on popstate (browser back/forward)
+  useEffect(() => {
+    const urlStepId = resolveStepId(stepParam);
+    if (urlStepId !== currentStepId && !isTransitioning.current) {
+      setOpacity(0);
+      setTimeout(() => {
+        setCurrentStepId(urlStepId);
+        requestAnimationFrame(() => setOpacity(1));
+      }, TRANSITION_MS);
+    }
+  }, [stepParam]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const currentStep = steps.find((s) => s.id === currentStepId) ?? steps[0];
+
   const setField = (key: string, value: string) =>
     setFormData((prev) => ({ ...prev, [key]: value }));
 
   const goTo = (stepId: string | undefined) => {
-    if (!stepId) return;
-    if (stepId === "home") router.push(baseUrl);
-    else if (stepId === "result") router.push(`${baseUrl}/result`);
-    else router.push(`${baseUrl}?step=step_${stepId}`);
+    if (!stepId || isTransitioning.current) return;
+    isTransitioning.current = true;
+
+    // 1) Fade out
+    setOpacity(0);
+
+    // 2) After fade-out, switch step & update URL
+    setTimeout(() => {
+      if (stepId === "result") {
+        router.push(`${baseUrl}/result`);
+        isTransitioning.current = false;
+        return;
+      }
+
+      setCurrentStepId(stepId);
+
+      // Update URL without full navigation
+      const newUrl = stepId === "home" ? baseUrl : `${baseUrl}?step=step_${stepId}`;
+      window.history.pushState(null, "", newUrl);
+
+      // 3) Fade in
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setOpacity(1);
+          isTransitioning.current = false;
+        });
+      });
+    }, TRANSITION_MS);
+  };
+
+  const transitionStyle = {
+    opacity,
+    transition: `opacity ${TRANSITION_MS}ms ease-in-out`,
   };
 
   // === HERO ===
   if (currentStep.type === "hero") {
     const step = currentStep;
     return (
-      <div className="mx-auto h-[100dvh] min-h-[100dvh] w-full max-w-[480px] overflow-hidden text-white relative">
+      <div className="mx-auto h-[100dvh] min-h-[100dvh] w-full max-w-[480px] overflow-hidden text-white relative" style={transitionStyle}>
         <SajuHeader />
         <div className="absolute inset-0 z-0 overflow-hidden bg-[#111111]">
           <div className="absolute inset-0 h-full w-full">
@@ -111,6 +163,7 @@ function StepContent({ config }: { config: ServiceConfig }) {
         bgType="image"
         bgSrc={step.bgSrc}
         bottomGradient={step.bottomGradient}
+        style={transitionStyle}
         buttons={
           <>
             {step.prev && <PrevButton onClick={() => goTo(step.prev)} />}
@@ -132,6 +185,7 @@ function StepContent({ config }: { config: ServiceConfig }) {
         bgSrc={step.bgSrc}
         topGradient={step.topGradient}
         bottomGradient={step.bottomGradient}
+        style={transitionStyle}
         stepIndicator={step.stepNumber ? { current: step.stepNumber, total: step.totalSteps } : undefined}
         headerContent={
           step.header ? (

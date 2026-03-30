@@ -39,22 +39,31 @@
       "id": "info",
       "type": "form",
       "stepNumber": 1,
-      "totalSteps": 2,
+      "totalSteps": 3,
       "bgSrc": "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/main/step_info.png",
       "cta": "다 입력했어!",
       "prev": "intro",
       "next": "middle",
-      "header": {
-        "character": "청월",
-        "question": "이름과 성별을 알려주세요."
-      },
       "fields": [
         {
           "key": "name",
           "type": "text",
-          "label": "이름",
-          "placeholder": "이름을 입력해주세요.",
+          "label": "나의 이름",
+          "placeholder": "이름을 입력해 주세요.",
           "maxLength": 10
+        },
+        {
+          "key": "birthdate",
+          "type": "birthdate",
+          "label": "나의 생년월일",
+          "placeholder": "0000.00.00",
+          "calendarLabels": ["양력", "음력"]
+        },
+        {
+          "key": "birthtime",
+          "type": "time-select",
+          "label": "나의 태어난 시간",
+          "unknownLabel": "시간모름"
         },
         {
           "key": "gender",
@@ -79,51 +88,50 @@
       "id": "step1",
       "type": "form",
       "stepNumber": 2,
-      "totalSteps": 2,
+      "totalSteps": 3,
       "bgSrc": "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/main/step_1.png",
       "cta": "다음으로",
       "prev": "middle",
       "next": "step2",
       "header": {
         "character": "청월",
-        "question": "생년월일을 알려주세요."
+        "question": "혹시 지금 만나는 분이 있으세요?\n연애 중이신지 궁금해요!"
       },
       "fields": [
         {
-          "key": "birthdate",
-          "type": "birthdate",
-          "label": "생년월일",
-          "calendarLabels": [
-            "양력",
-            "음력"
+          "key": "loveStatus",
+          "type": "select",
+          "label": "현재 연애 중이신가요?",
+          "optional": true,
+          "placeholder": "연애 상태",
+          "options": [
+            "연애중",
+            "솔로",
+            "기혼"
           ]
-        },
-        {
-          "key": "birthtime",
-          "type": "time-select",
-          "label": "태어난 시간",
-          "unknownLabel": "시간 모름"
         }
       ]
     },
     {
       "id": "step2",
       "type": "form",
-      "stepNumber": 2,
-      "totalSteps": 2,
+      "stepNumber": 3,
+      "totalSteps": 3,
       "bgSrc": "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/main/step_2.png",
       "cta": "결과 보러가기",
       "prev": "step1",
+      "next": "result",
       "header": {
         "character": "청월",
-        "question": "궁금한 점이 있나요?"
+        "question": "고민이나 중요한 일이 있으신가요?\n제게 알려주시면, 정성껏 답변해 드릴게요."
       },
       "fields": [
         {
           "key": "question",
           "type": "textarea",
-          "label": "질문",
-          "placeholder": "궁금한 점을 입력해주세요.",
+          "label": "청월아씨에게 궁금한 점을 물어보세요.",
+          "placeholder": "정성껏 답변 해 드리오니, 꼼꼼하게 작성해 주세요",
+          "maxLength": 200,
           "optional": true
         }
       ]

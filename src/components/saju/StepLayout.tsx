@@ -12,6 +12,8 @@ interface StepLayoutProps {
   bottomGradient?: { height: number };
   stepIndicator?: { current: number; total: number };
   headerContent?: ReactNode;
+  className?: string;
+  style?: React.CSSProperties;
 }
 
 export default function StepLayout({
@@ -24,9 +26,11 @@ export default function StepLayout({
   bottomGradient = { height: 150 },
   stepIndicator,
   headerContent,
+  className = "",
+  style,
 }: StepLayoutProps) {
   return (
-    <div className="mx-auto h-[100dvh] min-h-[100dvh] w-full max-w-[480px] overflow-hidden text-white relative">
+    <div className={`mx-auto h-[100dvh] min-h-[100dvh] w-full max-w-[480px] overflow-hidden text-white relative ${className}`} style={style}>
       {/* 헤더 */}
       <header className="inset-x-0 top-0 z-50 flex justify-center h-[3.75rem] absolute bg-transparent mx-auto max-w-md">
         <div className="flex w-full items-center justify-between px-5">

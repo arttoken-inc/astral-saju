@@ -27,7 +27,7 @@ export default function LoginPage() {
             <form
               action={async () => {
                 "use server";
-                await signIn("google", { redirectTo: "/" });
+                await signIn("google", { redirectTo: "/auth/loading" });
               }}
             >
               <button
@@ -44,46 +44,27 @@ export default function LoginPage() {
               </button>
             </form>
 
-            {/* 카카오 버튼 + 프로모 말풍선 */}
-            <div className="relative">
-              <button className="flex h-12 w-full items-center justify-center gap-2 rounded-[0.625rem] bg-[#FEE500]">
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 18 16"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="text-black"
-                >
-                  <path
-                    fillRule="evenodd"
-                    clipRule="evenodd"
-                    d="M8.98064 0C4.29499 0 0.5 3.07389 0.5 6.81773C0.5 9.26108 2.0877 11.3892 4.44989 12.6108L3.63667 15.6453C3.59795 15.7241 3.63667 15.8424 3.71412 15.9212C3.75285 15.9606 3.8303 16 3.86902 16C3.90774 16 3.98519 15.9606 4.02392 15.9606L7.47039 13.5961C7.9738 13.6749 8.47722 13.7143 9.01936 13.7143C13.705 13.7143 17.5 10.6404 17.5 6.89655C17.5 3.07389 13.705 0 8.98064 0Z"
-                    fill="currentColor"
-                  />
-                </svg>
-                <span className="font-pretendard text-base font-bold text-[#191600]">
-                  카카오로 로그인/가입
-                </span>
-              </button>
-
-              {/* 프로모 말풍선 */}
-              <div className="absolute left-3.5 top-[-90%]" style={{ transform: "translateY(47%)" }}>
-                <div className="relative w-fit rounded-[0.625rem] bg-[#111111] px-3 py-2 font-pretendard text-xs font-bold text-white">
-                  <svg
-                    width="6"
-                    height="9"
-                    viewBox="0 0 6 9"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="absolute left-4 -bottom-1.5"
-                  >
-                    <path d="M0 0L3 9L6 0Z" fill="#111111" />
-                  </svg>
-                  <div>카카오 로그인하면 다시보기 기간이 무제한!</div>
-                </div>
-              </div>
-            </div>
+            {/* 카카오 버튼 */}
+            <button className="flex h-12 w-full items-center justify-center gap-2 rounded-[0.625rem] bg-[#FEE500]">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 18 16"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="text-black"
+              >
+                <path
+                  fillRule="evenodd"
+                  clipRule="evenodd"
+                  d="M8.98064 0C4.29499 0 0.5 3.07389 0.5 6.81773C0.5 9.26108 2.0877 11.3892 4.44989 12.6108L3.63667 15.6453C3.59795 15.7241 3.63667 15.8424 3.71412 15.9212C3.75285 15.9606 3.8303 16 3.86902 16C3.90774 16 3.98519 15.9606 4.02392 15.9606L7.47039 13.5961C7.9738 13.6749 8.47722 13.7143 9.01936 13.7143C13.705 13.7143 17.5 10.6404 17.5 6.89655C17.5 3.07389 13.705 0 8.98064 0Z"
+                  fill="currentColor"
+                />
+              </svg>
+              <span className="font-pretendard text-base font-bold text-[#191600]">
+                카카오로 로그인/가입
+              </span>
+            </button>
 
             {/* 전화번호 로그인 */}
             <button className="mx-auto block w-fit font-pretendard font-normal text-[#424242] underline underline-offset-2">
