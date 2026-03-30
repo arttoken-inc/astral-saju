@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { auth, signOut } from "@/auth";
 import Link from "next/link";
+import { cdnUrl } from "@/lib/cdn";
 
 export const metadata: Metadata = {
   title: "마이 페이지 | 청월당 사주",
@@ -16,7 +17,7 @@ export default async function MyPage() {
       <header className="fixed inset-x-0 top-0 z-50 mx-auto flex h-[3.75rem] max-w-md items-center justify-between border-b border-[#E1E1E1] bg-white px-4">
         <a href="/">
           <img
-            src="https://cheongwoldang.com/logos/logo_with_black_typo.png"
+            src={cdnUrl("logos/logo_with_black_typo.png")}
             alt="청월당"
             className="h-6"
           />
@@ -51,7 +52,7 @@ export default async function MyPage() {
                   <img src={user.image} alt="프로필" className="h-full w-full object-cover" />
                 ) : (
                   <img
-                    src="https://cdn.aifortunedoctor.com/web/live/current/images/profile/MALE_을목_신강.png"
+                    src={cdnUrl("profile/MALE_을목_신강.png")}
                     alt="프로필"
                     className="h-full w-full object-cover"
                   />
@@ -104,7 +105,7 @@ export default async function MyPage() {
         <div className="mb-10 w-full px-5">
           <Link href="/replay">
             <img
-              src="https://cdn.aifortunedoctor.com/web/live/current/images/replay/replay_banner.png"
+              src={cdnUrl("replay/replay_banner.png")}
               alt="내 사주 결과 다시보기"
               className="w-full rounded-[0.3125rem] border border-[#F1F1F1] shadow-[0px_4px_20px_0px_#0000001A]"
             />
@@ -187,7 +188,7 @@ export default async function MyPage() {
         <footer className="w-full bg-[#F7F9FA] px-4 py-10">
           <div className="flex flex-col items-center">
             <img
-              src="https://cheongwoldang.com/logos/logo_with_black_typo.png"
+              src={cdnUrl("logos/logo_with_black_typo.png")}
               alt="청월당"
               className="mb-4 h-5"
             />

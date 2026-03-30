@@ -5,13 +5,23 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
 import "swiper/css";
-import { carouselSlides, carouselBg, carouselText } from "@/data/landing";
+import { cdnUrl } from "@/lib/cdn";
+import type { LandingCarouselSlide } from "@/lib/configLoader";
+
+function carouselBg(slug: string, device: "pc" | "tablet" | "mobile") {
+  return cdnUrl(`main/carousel/${slug}/bg-${device}.png`);
+}
+
+function carouselText(slug: string, device: "pc" | "tablet" | "mobile") {
+  return cdnUrl(`main/carousel/${slug}/text-${device}.png`);
+}
 
 interface HeroCarouselProps {
+  slides: LandingCarouselSlide[];
   onSlideChange?: (index: number) => void;
 }
 
-export default function HeroCarousel({ onSlideChange }: HeroCarouselProps) {
+export default function HeroCarousel({ slides, onSlideChange }: HeroCarouselProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
   const [swiperRef, setSwiperRef] = useState<SwiperType | null>(null);
@@ -51,7 +61,7 @@ export default function HeroCarousel({ onSlideChange }: HeroCarouselProps) {
         onSlideChange={handleSlideChange}
         className="hero-carousel h-full w-full"
       >
-        {carouselSlides.map((slide) => (
+        {slides.map((slide) => (
           <SwiperSlide key={slide.slug}>
             <a className="block w-full" href={slide.href}>
               <div className="relative w-full">
@@ -102,8 +112,8 @@ export default function HeroCarousel({ onSlideChange }: HeroCarouselProps) {
         <div className="relative mx-auto h-full w-full max-w-[77.5rem]">
           <div className="absolute bottom-6 right-5 z-10 flex items-center gap-2 md:bottom-10 md:right-10 xl:right-0">
             <div className="flex items-center gap-1">
-              {carouselSlides.map((_, i) => {
-                const isDark = carouselSlides[activeIndex]?.dark;
+              {slides.map((_, i) => {
+                const isDark = slides[activeIndex]?.dark;
                 const activeBg = isDark ? "bg-white" : "bg-[#111111]";
                 const inactiveBg = isDark ? "bg-white/40" : "bg-[#111111]/20";
                 return (
@@ -126,7 +136,7 @@ export default function HeroCarousel({ onSlideChange }: HeroCarouselProps) {
               className="flex h-4 w-4 cursor-pointer items-center justify-center"
             >
               {(() => {
-                const isDark = carouselSlides[activeIndex]?.dark;
+                const isDark = slides[activeIndex]?.dark;
                 const strokeColor = isDark ? "#FFFFFF" : "#111111";
                 return isPlaying ? (
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">

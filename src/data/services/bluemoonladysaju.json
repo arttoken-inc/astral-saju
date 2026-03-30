@@ -17,9 +17,9 @@
       "id": "home",
       "type": "hero",
       "bgType": "video",
-      "bgSrc": "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/main/video/main_video.mp4?v=20260119",
-      "bgPoster": "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/main/step_home.png?v=20260119",
-      "titleImage": "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/main/step_home_title.png?v=20260119",
+      "bgSrc": "s/bluemoonladysaju/main/video/main_video.mp4",
+      "bgPoster": "s/bluemoonladysaju/main/step_home.png",
+      "titleImage": "s/bluemoonladysaju/main/step_home_title.png",
       "cta": "내 사주팔자 바로 확인하기",
       "next": "intro",
       "topGradient": {
@@ -30,7 +30,7 @@
     {
       "id": "intro",
       "type": "fullscreen-image",
-      "bgSrc": "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/main/step_intro.png",
+      "bgSrc": "s/bluemoonladysaju/main/step_intro.png",
       "cta": "좋아, 내 이름은..",
       "prev": "home",
       "next": "info"
@@ -40,7 +40,7 @@
       "type": "form",
       "stepNumber": 1,
       "totalSteps": 3,
-      "bgSrc": "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/main/step_info.png",
+      "bgSrc": "s/bluemoonladysaju/main/step_info.png",
       "cta": "다 입력했어!",
       "prev": "intro",
       "next": "middle",
@@ -79,7 +79,7 @@
     {
       "id": "middle",
       "type": "fullscreen-image",
-      "bgSrc": "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/main/step_middle.png",
+      "bgSrc": "s/bluemoonladysaju/main/step_middle.png",
       "cta": "응, 어떤걸 알려줄까?",
       "prev": "info",
       "next": "step1"
@@ -89,7 +89,7 @@
       "type": "form",
       "stepNumber": 2,
       "totalSteps": 3,
-      "bgSrc": "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/main/step_1.png",
+      "bgSrc": "s/bluemoonladysaju/main/step_1.png",
       "cta": "다음으로",
       "prev": "middle",
       "next": "step2",
@@ -117,7 +117,7 @@
       "type": "form",
       "stepNumber": 3,
       "totalSteps": 3,
-      "bgSrc": "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/main/step_2.png",
+      "bgSrc": "s/bluemoonladysaju/main/step_2.png",
       "cta": "결과 보러가기",
       "prev": "step1",
       "next": "result",
@@ -141,7 +141,7 @@
     "sections": [
       {
         "type": "image-with-text",
-        "image": "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/result/result_0.png",
+        "image": "s/bluemoonladysaju/result/result_0.png",
         "texts": [
           {
             "content": "{name}님,\n만나서 반가워요,",
@@ -179,11 +179,11 @@
       },
       {
         "type": "image",
-        "image": "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/result/result_1.png"
+        "image": "s/bluemoonladysaju/result/result_1.png"
       },
       {
         "type": "image-with-text",
-        "image": "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/result/result_2.png",
+        "image": "s/bluemoonladysaju/result/result_2.png",
         "texts": [
           {
             "content": "먼저 제가\n{name}님의 사주를\n보기 쉽게 정리했어요",
@@ -198,15 +198,15 @@
       {
         "type": "saju-table",
         "className": "relative mt-36",
-        "bubbleImage": "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/result/result_bubble_0.png",
+        "bubbleImage": "s/bluemoonladysaju/result/result_bubble_0.png",
         "bubbleWidth": "252px"
       },
       {
         "type": "daeun-table",
         "className": "relative mt-40",
         "bubbleImages": [
-          "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/result/result_bubble_1.png",
-          "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/result/result_bubble_2.png"
+          "s/bluemoonladysaju/result/result_bubble_1.png",
+          "s/bluemoonladysaju/result/result_bubble_2.png"
         ],
         "bubbleWidths": [
           "237px",
@@ -216,12 +216,12 @@
       {
         "type": "ohaeng",
         "className": "relative mb-10 mt-80",
-        "bubbleImage": "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/result/result_bubble_3.png",
+        "bubbleImage": "s/bluemoonladysaju/result/result_bubble_3.png",
         "bubbleWidth": "288px"
       },
       {
         "type": "image-with-text",
-        "image": "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/result/result_3.png",
+        "image": "s/bluemoonladysaju/result/result_3.png",
         "texts": [
           {
             "content": "조금 비밀스러운\n이야기지만,",
@@ -261,7 +261,7 @@
       },
       {
         "type": "image",
-        "image": "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/result/result_4.png"
+        "image": "s/bluemoonladysaju/result/result_4.png"
       },
       {
         "type": "crisis-list",
@@ -270,7 +270,7 @@
       },
       {
         "type": "image-with-text",
-        "image": "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/result/result_5.png",
+        "image": "s/bluemoonladysaju/result/result_5.png",
         "texts": [
           {
             "content": "이 밖에도 {name}님께\n드릴 말씀이\n정말 많으니,",
@@ -284,7 +284,7 @@
       },
       {
         "type": "image-with-text",
-        "image": "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/result/result_6.png",
+        "image": "s/bluemoonladysaju/result/result_6.png",
         "texts": [
           {
             "content": "\"오직 {name}님 만을 위해\n준비된 이야기\"",
@@ -298,7 +298,7 @@
       },
       {
         "type": "payment-gate",
-        "image": "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/result/result_7.png?v=20260114",
+        "image": "s/bluemoonladysaju/result/result_7.png",
         "aspectRatio": "750/3538",
         "buttonPosition": {
           "top": "48.5%",
@@ -309,53 +309,53 @@
       {
         "type": "image-pair",
         "images": [
-          "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/result/result_hyundai_1.png",
-          "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/result/result_hyundai_2.png"
+          "s/bluemoonladysaju/result/result_hyundai_1.png",
+          "s/bluemoonladysaju/result/result_hyundai_2.png"
         ]
       },
       {
         "type": "image",
-        "image": "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/result/result_8.png"
+        "image": "s/bluemoonladysaju/result/result_8.png"
       },
       {
         "type": "image",
-        "image": "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/result/result_9.png"
+        "image": "s/bluemoonladysaju/result/result_9.png"
       },
       {
         "type": "image",
-        "image": "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/result/result_10_251024.png"
+        "image": "s/bluemoonladysaju/result/result_10_251024.png"
       },
       {
         "type": "image",
-        "image": "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/result/result_11.png"
+        "image": "s/bluemoonladysaju/result/result_11.png"
       },
       {
         "type": "image",
-        "image": "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/result/result_12.png"
+        "image": "s/bluemoonladysaju/result/result_12.png"
       },
       {
         "type": "image",
-        "image": "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/result/result_13.png"
+        "image": "s/bluemoonladysaju/result/result_13.png"
       },
       {
         "type": "image",
-        "image": "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/result/result_14.png"
+        "image": "s/bluemoonladysaju/result/result_14.png"
       },
       {
         "type": "image",
-        "image": "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/result/result_15.png"
+        "image": "s/bluemoonladysaju/result/result_15.png"
       },
       {
         "type": "image",
-        "image": "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/result/result_16.png"
+        "image": "s/bluemoonladysaju/result/result_16.png"
       },
       {
         "type": "image",
-        "image": "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/result/result_17.png?v=20260114"
+        "image": "s/bluemoonladysaju/result/result_17.png"
       },
       {
         "type": "image",
-        "image": "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/result/result_18.png"
+        "image": "s/bluemoonladysaju/result/result_18.png"
       }
     ]
   },
@@ -626,12 +626,12 @@
     }
   ],
   "decorations": {
-    "leftCloud": "https://cdn.aifortunedoctor.com/web/live/current/images/decorations/border_left_cloud_decoration.png",
-    "rightCloud": "https://cdn.aifortunedoctor.com/web/live/current/images/decorations/border_right_cloud_decoration.png",
-    "fiveCircle": "https://cdn.aifortunedoctor.com/web/live/current/images/components/saju/fivecircle/five-circle.png",
-    "fiveCircleLegend": "https://cdn.aifortunedoctor.com/web/live/current/images/components/saju/fivecircle/five-circle-legend.png",
-    "strengthDiagram": "https://cdn.aifortunedoctor.com/web/live/current/images/components/saju/fivecircle/details/strength-diagram.png",
-    "maskedWealthGraph": "https://cdn.aifortunedoctor.com/web/live/current/images/s/bluemoonladysaju/result/masked-wealth-graph.png",
-    "dreamPerson": "https://cdn.aifortunedoctor.com/web/live/current/images/components/day_person/romance/best/masked/FEMALE_%EC%9D%84_%EC%8B%A0%EA%B0%95.png"
+    "leftCloud": "decorations/border_left_cloud_decoration.png",
+    "rightCloud": "decorations/border_right_cloud_decoration.png",
+    "fiveCircle": "components/saju/fivecircle/five-circle.png",
+    "fiveCircleLegend": "components/saju/fivecircle/five-circle-legend.png",
+    "strengthDiagram": "components/saju/fivecircle/details/strength-diagram.png",
+    "maskedWealthGraph": "s/bluemoonladysaju/result/masked-wealth-graph.png",
+    "dreamPerson": "components/day_person/romance/best/masked/FEMALE_%EC%9D%84_%EC%8B%A0%EA%B0%95.png"
   }
 }

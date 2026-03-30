@@ -1,6 +1,7 @@
-import { celebrities } from "@/data/landing";
+import { cdnUrl } from "@/lib/cdn";
+import type { LandingCelebrity } from "@/lib/configLoader";
 
-export default function CelebrityBox() {
+export default function CelebrityBox({ celebrities }: { celebrities: LandingCelebrity[] }) {
   return (
     <div className="w-full xl:flex-1">
       <h2 className="mb-5 font-pretendard text-[20px] font-semibold text-[#111111] md:mb-7 md:text-[32px]">
@@ -22,7 +23,7 @@ export default function CelebrityBox() {
                 <img
                   className="h-16 w-16 rounded-[10px] object-cover"
                   alt={celeb.name}
-                  src={celeb.img}
+                  src={cdnUrl(celeb.img)}
                 />
               </div>
               <div className="min-w-0 flex-1">

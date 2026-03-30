@@ -1,9 +1,9 @@
 import type { SajuData, OhaengData, Decorations } from "@/lib/serviceConfig";
 import SajuCard from "./SajuCard";
+import { cdnUrl } from "@/lib/cdn";
 
-const CDN = "https://cdn.aifortunedoctor.com";
 function yongsinImg(name: string) {
-  return `${CDN}/web/live/current/images/components/saju/fivecircle/details/${encodeURIComponent(name)}.png`;
+  return cdnUrl(`components/saju/fivecircle/details/${encodeURIComponent(name)}.png`);
 }
 
 function InfoButton() {
@@ -40,8 +40,8 @@ export default function OhaengSection({ data, ohaeng: oh, decorations }: OhaengS
             <InfoButton />
           </div>
           <div className="relative mx-1">
-            <img alt="" className="w-full" src={decorations.fiveCircle} />
-            <img alt="" className="absolute left-1 top-0 h-[32px] w-[51px]" src={decorations.fiveCircleLegend} />
+            <img alt="" className="w-full" src={cdnUrl(decorations.fiveCircle)} />
+            <img alt="" className="absolute left-1 top-0 h-[32px] w-[51px]" src={cdnUrl(decorations.fiveCircleLegend)} />
             {oh.distribution.map((count, i) => {
               const positions = [
                 { left: "49.1%", top: "21.8%" },
@@ -116,7 +116,7 @@ export default function OhaengSection({ data, ohaeng: oh, decorations }: OhaengS
         <div>
           <h4 className="mb-4 font-pretendard text-base font-bold text-[#111111]">신강신약</h4>
           <div className="flex flex-col items-center">
-            <img alt="" src={decorations.strengthDiagram} className="w-[274px]" />
+            <img alt="" src={cdnUrl(decorations.strengthDiagram)} className="w-[274px]" />
             <div className="mt-2 flex w-[274px] justify-between font-pretendard text-[0.625rem] text-[#757575]">
               {["극약", "태약", "신약", "중화", "신강", "태강", "극왕"].map((label) => (
                 <span key={label}>{label}</span>

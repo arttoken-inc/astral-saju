@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import type { Decorations } from "@/lib/serviceConfig";
+import { cdnUrl } from "@/lib/cdn";
 
 interface SajuCardProps {
   children: ReactNode;
@@ -14,8 +15,8 @@ export default function SajuCard({ children, decorations }: SajuCardProps) {
       <div className="absolute left-2 h-full w-[1px] bg-[#2B557E]" />
       <div className="absolute right-2 h-full w-[1px] bg-[#2B557E]" />
       <div className="absolute z-0 mt-6 flex w-full justify-between px-2">
-        <img alt="" className="mt-5 h-[2.375rem] w-[3.5rem]" src={decorations.leftCloud} />
-        <img alt="" className="mb-5 h-[2.375rem] w-[3.5rem]" src={decorations.rightCloud} />
+        <img alt="" className="mt-5 h-[2.375rem] w-[3.5rem]" src={cdnUrl(decorations.leftCloud)} />
+        <img alt="" className="mb-5 h-[2.375rem] w-[3.5rem]" src={cdnUrl(decorations.rightCloud)} />
       </div>
       <div className="relative" style={{ zIndex: 1 }}>
         {children}

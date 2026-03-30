@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import type { ServiceConfig, ResultSection } from "@/lib/serviceConfig";
 import { replaceTemplate } from "@/lib/templateReplace";
+import { cdnUrl } from "@/lib/cdn";
 import SajuTable from "./SajuTable";
 import DaeunTable from "./DaeunTable";
 import OhaengSection from "./OhaengSection";
@@ -39,14 +40,14 @@ function SectionRenderer({ section, config, vars }: { section: ResultSection; co
     case "image":
       return (
         <div className={section.className || "relative"}>
-          <img className="w-full" alt="" src={section.image} />
+          <img className="w-full" alt="" src={cdnUrl(section.image)} />
         </div>
       );
 
     case "image-with-text":
       return (
         <div className={section.className || "relative"}>
-          <img className="w-full" alt="" src={section.image} />
+          <img className="w-full" alt="" src={cdnUrl(section.image)} />
           {section.texts.map((txt, i) => (
             <p key={i} className={TEXT_CLASS} style={txt.style as React.CSSProperties}>
               {t(txt.content).split("\n").map((line, j) => (
@@ -61,7 +62,7 @@ function SectionRenderer({ section, config, vars }: { section: ResultSection; co
       return (
         <div className={section.className}>
           {section.images.map((img, i) => (
-            <img key={i} className="w-full" alt="" src={img} />
+            <img key={i} className="w-full" alt="" src={cdnUrl(img)} />
           ))}
         </div>
       );
@@ -69,7 +70,7 @@ function SectionRenderer({ section, config, vars }: { section: ResultSection; co
     case "saju-table":
       return (
         <div className={section.className}>
-          <img alt="" src={section.bubbleImage} className="mx-auto mb-4" style={{ width: section.bubbleWidth }} />
+          <img alt="" src={cdnUrl(section.bubbleImage)} className="mx-auto mb-4" style={{ width: section.bubbleWidth }} />
           <CardWrapper>
             <SajuTable data={config.sampleData} decorations={config.decorations} />
           </CardWrapper>
@@ -79,12 +80,12 @@ function SectionRenderer({ section, config, vars }: { section: ResultSection; co
     case "daeun-table":
       return (
         <div className={section.className}>
-          <img alt="" src={section.bubbleImages[0]} className="mx-auto mb-4" style={{ width: section.bubbleWidths[0] }} />
+          <img alt="" src={cdnUrl(section.bubbleImages[0])} className="mx-auto mb-4" style={{ width: section.bubbleWidths[0] }} />
           <CardWrapper>
             <DaeunTable data={config.sampleData} daeun={config.daeunData} decorations={config.decorations} />
           </CardWrapper>
           {section.bubbleImages[1] && (
-            <img alt="" src={section.bubbleImages[1]} className="mx-auto mt-4" style={{ width: section.bubbleWidths[1] }} />
+            <img alt="" src={cdnUrl(section.bubbleImages[1])} className="mx-auto mt-4" style={{ width: section.bubbleWidths[1] }} />
           )}
         </div>
       );
@@ -92,7 +93,7 @@ function SectionRenderer({ section, config, vars }: { section: ResultSection; co
     case "ohaeng":
       return (
         <div className={section.className}>
-          <img alt="" src={section.bubbleImage} className="mx-auto mb-4" style={{ width: section.bubbleWidth }} />
+          <img alt="" src={cdnUrl(section.bubbleImage)} className="mx-auto mb-4" style={{ width: section.bubbleWidth }} />
           <CardWrapper>
             <OhaengSection data={config.sampleData} ohaeng={config.ohaengData} decorations={config.decorations} />
           </CardWrapper>
@@ -127,7 +128,7 @@ function SectionRenderer({ section, config, vars }: { section: ResultSection; co
                 <h3 className="text-center font-gapyeong text-xl font-bold leading-none">{t(section.title)}</h3>
                 <div className="mx-2 mb-10 mt-10 overflow-hidden rounded-3xl border-4 border-[#BDCEED]">
                   <div className="relative w-full" style={{ aspectRatio: "295 / 446" }}>
-                    <img className="h-full w-full object-cover" alt="" src={decs.dreamPerson} />
+                    <img className="h-full w-full object-cover" alt="" src={cdnUrl(decs.dreamPerson)} />
                   </div>
                 </div>
                 <div className="w-full border-b border-[#A1A1A1]" />
@@ -164,7 +165,7 @@ function SectionRenderer({ section, config, vars }: { section: ResultSection; co
             ))}
           </div>
           <div className="text-center font-gapyeong text-base font-bold">{t(section.title)}</div>
-          <img alt="" className="mt-4 w-full" src={config.decorations.maskedWealthGraph} />
+          <img alt="" className="mt-4 w-full" src={cdnUrl(config.decorations.maskedWealthGraph)} />
         </div>
       );
 
@@ -189,7 +190,7 @@ function SectionRenderer({ section, config, vars }: { section: ResultSection; co
       return (
         <div className="relative">
           <div className="relative" style={{ aspectRatio: section.aspectRatio }}>
-            <img className="h-full w-full object-cover" alt="" src={section.image} />
+            <img className="h-full w-full object-cover" alt="" src={cdnUrl(section.image)} />
           </div>
           <div className="absolute inset-x-0 w-full -translate-y-1/2" style={{ top: section.buttonPosition.top, height: section.buttonPosition.height, paddingLeft: section.buttonPosition.px, paddingRight: section.buttonPosition.px }}>
             <button className="z-10 h-full w-full rounded-b-3xl bg-transparent" />

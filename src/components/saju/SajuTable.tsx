@@ -1,9 +1,9 @@
 import type { SajuData, Decorations } from "@/lib/serviceConfig";
 import SajuCard from "./SajuCard";
+import { cdnUrl } from "@/lib/cdn";
 
-const CDN = "https://cdn.aifortunedoctor.com";
 function kanjiImg(char: string) {
-  return `${CDN}/web/live/current/images/moonlight/kanji/${encodeURIComponent(char)}.png`;
+  return cdnUrl(`moonlight/kanji/${encodeURIComponent(char)}.png`);
 }
 
 interface SajuTableProps {

@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
-import config from "@/data/services/bluemoonladysaju.json";
+import { loadServiceConfig } from "@/lib/configLoader";
 
-export const metadata: Metadata = {
-  title: config.meta.pageTitle,
-};
+export const dynamic = "force-dynamic";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const config = await loadServiceConfig("bluemoonladysaju");
+  return { title: config.meta.pageTitle };
+}
 
 export default function BluemoonLayout({
   children,

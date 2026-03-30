@@ -10,6 +10,7 @@ import TimeSelectField from "./fields/TimeSelectField";
 import ButtonGroupField from "./fields/ButtonGroupField";
 import SelectField from "./fields/SelectField";
 import TextareaField from "./fields/TextareaField";
+import { cdnUrl } from "@/lib/cdn";
 
 const TRANSITION_MS = 400;
 
@@ -116,12 +117,12 @@ function StepContent({ config }: { config: ServiceConfig }) {
           <div className="absolute inset-0 h-full w-full">
             <div className="relative h-full w-full [&>video]:h-full [&>video]:object-cover [&>video]:object-top">
               {step.bgType === "video" ? (
-                <video className="w-full" muted loop autoPlay playsInline poster={step.bgPoster}>
-                  <source src={step.bgSrc} type="video/mp4" />
-                  <img src={step.bgPoster} alt="배경" className="w-full" />
+                <video className="w-full" muted loop autoPlay playsInline poster={cdnUrl(step.bgPoster ?? "")}>
+                  <source src={cdnUrl(step.bgSrc)} type="video/mp4" />
+                  <img src={cdnUrl(step.bgPoster ?? "")} alt="배경" className="w-full" />
                 </video>
               ) : (
-                <img src={step.bgSrc} alt="배경" className="absolute inset-0 h-full w-full object-cover" />
+                <img src={cdnUrl(step.bgSrc)} alt="배경" className="absolute inset-0 h-full w-full object-cover" />
               )}
             </div>
           </div>
@@ -136,7 +137,7 @@ function StepContent({ config }: { config: ServiceConfig }) {
                 {step.titleImage && (
                   <div className="absolute bottom-[120px] left-0 right-0 z-10 flex justify-center px-5">
                     <div className="relative w-full">
-                      <img src={step.titleImage} alt="Title" className="h-full w-full object-contain" />
+                      <img src={cdnUrl(step.titleImage)} alt="Title" className="h-full w-full object-contain" />
                     </div>
                   </div>
                 )}
@@ -161,7 +162,7 @@ function StepContent({ config }: { config: ServiceConfig }) {
     return (
       <StepLayout
         bgType="image"
-        bgSrc={step.bgSrc}
+        bgSrc={cdnUrl(step.bgSrc)}
         bottomGradient={step.bottomGradient}
         style={transitionStyle}
         buttons={
@@ -182,7 +183,7 @@ function StepContent({ config }: { config: ServiceConfig }) {
     return (
       <StepLayout
         bgType="image"
-        bgSrc={step.bgSrc}
+        bgSrc={cdnUrl(step.bgSrc)}
         topGradient={step.topGradient}
         bottomGradient={step.bottomGradient}
         style={transitionStyle}

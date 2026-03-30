@@ -1,6 +1,6 @@
-import { dreamPosts } from "@/data/landing";
+import type { LandingDreamPost } from "@/lib/configLoader";
 
-export default function DreamBox() {
+export default function DreamBox({ posts }: { posts: LandingDreamPost[] }) {
   return (
     <div className="w-full xl:flex-1">
       <h2 className="mb-5 font-pretendard text-[20px] font-semibold text-[#111111] md:mb-7 md:text-[32px]">
@@ -8,7 +8,7 @@ export default function DreamBox() {
       </h2>
       <div className="w-full rounded-[0.625rem] border border-[#E1E1E1] bg-white px-5 pb-8 pt-8 shadow-md md:px-7 xl:pb-6">
         <div>
-          {dreamPosts.map((post, i) => (
+          {posts.map((post, i) => (
             <a
               key={post.href}
               className={`block w-full ${

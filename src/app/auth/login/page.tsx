@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { signIn } from "@/auth";
+import { cdnUrl } from "@/lib/cdn";
 
 export const metadata: Metadata = {
   title: "로그인 | 청월당 사주",
@@ -16,7 +17,7 @@ export default function LoginPage() {
               <img
                 className="h-full w-full object-cover"
                 alt="login"
-                src="https://cdn.aifortunedoctor.com/web/live/current/images/auth/login/default.png"
+                src={cdnUrl("auth/login/default.png")}
               />
             </div>
           </div>

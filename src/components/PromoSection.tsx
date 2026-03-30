@@ -1,4 +1,4 @@
-import { promoVideoSrc } from "@/data/landing";
+import { cdnUrl } from "@/lib/cdn";
 
 function FlowerSVG({ flip }: { flip?: boolean }) {
   return (
@@ -40,7 +40,7 @@ function FlowerSVG({ flip }: { flip?: boolean }) {
   );
 }
 
-export default function PromoSection() {
+export default function PromoSection({ videoSrc }: { videoSrc: string }) {
   return (
     <section className="mx-0 my-[60px] flex w-full flex-col items-center justify-center px-5 md:px-10 xl:mx-auto xl:my-[120px] xl:max-w-[82.5rem]">
       <div className="mb-3 flex h-[18px] w-fit items-center justify-center rounded-[100px] border-[0.5px] border-[#838383] px-4 md:mb-4 md:h-[26px] xl:mb-7 xl:h-[44px]">
@@ -58,7 +58,7 @@ export default function PromoSection() {
         muted
         playsInline
       >
-        <source src={promoVideoSrc} type="video/webm" />
+        <source src={cdnUrl(videoSrc)} type="video/webm" />
       </video>
       <div className="flex items-center justify-center gap-[11px] pt-5 md:gap-[31px] xl:gap-[34px] xl:pt-[50px]">
         <FlowerSVG />

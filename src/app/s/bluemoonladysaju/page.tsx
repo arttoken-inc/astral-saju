@@ -1,7 +1,9 @@
-import config from "@/data/services/bluemoonladysaju.json";
+import { loadServiceConfig } from "@/lib/configLoader";
 import ServiceStepPage from "@/components/saju/ServiceStepPage";
-import type { ServiceConfig } from "@/lib/serviceConfig";
 
-export default function Page() {
-  return <ServiceStepPage config={config as unknown as ServiceConfig} />;
+export const dynamic = "force-dynamic";
+
+export default async function Page() {
+  const config = await loadServiceConfig("bluemoonladysaju");
+  return <ServiceStepPage config={config} />;
 }
