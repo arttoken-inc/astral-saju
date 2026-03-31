@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { cdnUrl } from "@/lib/cdn";
 import type { LandingCelebrity } from "@/lib/configLoader";
 
@@ -19,11 +20,14 @@ export default function CelebrityBox({ celebrities }: { celebrities: LandingCele
               }`}
               href={celeb.href}
             >
-              <div className="flex-shrink-0">
-                <img
-                  className="h-16 w-16 rounded-[10px] object-cover"
+              <div className="relative h-16 w-16 flex-shrink-0">
+                <Image
+                  className="rounded-[10px] object-cover"
                   alt={celeb.name}
                   src={cdnUrl(celeb.img)}
+                  fill
+                  sizes="64px"
+                  loading="lazy"
                 />
               </div>
               <div className="min-w-0 flex-1">

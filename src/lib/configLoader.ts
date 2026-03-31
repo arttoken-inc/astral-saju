@@ -90,28 +90,20 @@ export async function loadLandingConfig(): Promise<LandingConfig> {
     // R2 not available, fall through
   }
 
-  // Fallback: import from bundled data
+  // Fallback: import from bundled data.
+  // landing.ts stores relative CDN paths; components apply cdnUrl() at render time.
   const landing = await import("@/data/landing");
-  const { cdnUrl } = await import("@/lib/cdn");
-
-  // Strip cdnUrl wrapper — bundled data already has cdnUrl() applied at import time.
-  // We need to extract the relative paths for consistency.
-  // Since bundled data uses cdnUrl() which prepends CDN_BASE, and our LandingConfig
-  // stores relative paths, we convert back.
-  const CDN_BASE = process.env.NEXT_PUBLIC_CDN_URL ?? "";
-  const stripCdn = (url: string) =>
-    CDN_BASE && url.startsWith(CDN_BASE) ? url.slice(CDN_BASE.length + 1) : url;
 
   return {
     carouselSlides: landing.carouselSlides,
-    bestCards: landing.bestCards.map((c) => ({ ...c, img: stripCdn(c.img) })),
-    fortuneCards: landing.fortuneCards.map((c) => ({ ...c, img: stripCdn(c.img) })),
+    bestCards: landing.bestCards,
+    fortuneCards: landing.fortuneCards,
     dreamPosts: landing.dreamPosts,
-    celebrities: landing.celebrities.map((c) => ({ ...c, img: stripCdn(c.img) })),
+    celebrities: landing.celebrities,
     assets: {
-      replayMobileImg: stripCdn(landing.replayMobileImg),
-      replayPcImg: stripCdn(landing.replayPcImg),
-      promoVideoSrc: stripCdn(landing.promoVideoSrc),
+      replayMobileImg: landing.replayMobileImg,
+      replayPcImg: landing.replayPcImg,
+      promoVideoSrc: landing.promoVideoSrc,
     },
   };
 }

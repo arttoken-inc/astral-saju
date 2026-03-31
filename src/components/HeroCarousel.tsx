@@ -16,6 +16,13 @@ function carouselText(slug: string, device: "pc" | "tablet" | "mobile") {
   return cdnUrl(`main/carousel/${slug}/text-${device}.png`);
 }
 
+function shouldLoad(slideIndex: number, activeIndex: number, total: number) {
+  if (total <= 2) return true;
+  const diff = Math.abs(slideIndex - activeIndex);
+  // loop 모드이므로 양끝 wrap-around도 고려
+  return diff <= 1 || diff >= total - 1;
+}
+
 interface HeroCarouselProps {
   slides: LandingCarouselSlide[];
   onSlideChange?: (index: number) => void;
@@ -61,50 +68,55 @@ export default function HeroCarousel({ slides, onSlideChange }: HeroCarouselProp
         onSlideChange={handleSlideChange}
         className="hero-carousel h-full w-full"
       >
-        {slides.map((slide) => (
-          <SwiperSlide key={slide.slug}>
-            <a className="block w-full" href={slide.href}>
-              <div className="relative w-full">
-                {/* 배경 이미지 - PC */}
-                <img
-                  className="hidden h-[38.75rem] w-full object-cover object-center xl:block"
-                  alt={`${slide.alt} 배너 배경`}
-                  src={carouselBg(slide.slug, "pc")}
-                />
-                {/* 배경 이미지 - 태블릿 */}
-                <img
-                  className="hidden h-[31.25rem] w-full object-cover object-center md:block md:h-[52rem] xl:hidden"
-                  alt={`${slide.alt} 배너 배경`}
-                  src={carouselBg(slide.slug, "tablet")}
-                />
-                {/* 배경 이미지 - 모바일 */}
-                <img
-                  className="block h-[31.25rem] w-full min-w-full object-cover object-center md:hidden"
-                  alt={`${slide.alt} 배너 배경`}
-                  src={carouselBg(slide.slug, "mobile")}
-                />
-                {/* 텍스트 오버레이 */}
-                <div className="absolute inset-0 mx-auto h-full w-full max-w-[80rem]">
-                  <img
-                    className="absolute bottom-12 left-1/2 top-1/2 z-10 hidden -translate-x-1/2 -translate-y-1/2 xl:block"
-                    alt={`${slide.alt} 텍스트`}
-                    src={carouselText(slide.slug, "pc")}
-                  />
-                  <img
-                    className="absolute bottom-12 left-1/2 top-1/2 z-10 hidden max-w-[48rem] -translate-x-1/2 -translate-y-1/2 md:block xl:hidden"
-                    alt={`${slide.alt} 텍스트`}
-                    src={carouselText(slide.slug, "tablet")}
-                  />
-                  <img
-                    className="absolute bottom-12 left-1/2 top-1/2 z-10 block max-w-[23.4375rem] -translate-x-1/2 -translate-y-1/2 md:hidden"
-                    alt={`${slide.alt} 텍스트`}
-                    src={carouselText(slide.slug, "mobile")}
-                  />
+        {slides.map((slide, i) => {
+          const load = shouldLoad(i, activeIndex, slides.length);
+          const isFirst = i === 0;
+          return (
+            <SwiperSlide key={slide.slug}>
+              <a className="block w-full" href={slide.href}>
+                <div className="relative w-full">
+                  {/* 배경 이미지 — <picture>로 디바이스별 단일 다운로드 */}
+                  <picture>
+                    <source
+                      media="(min-width: 1280px)"
+                      srcSet={load ? carouselBg(slide.slug, "pc") : undefined}
+                    />
+                    <source
+                      media="(min-width: 768px)"
+                      srcSet={load ? carouselBg(slide.slug, "tablet") : undefined}
+                    />
+                    <img
+                      className="h-[31.25rem] w-full object-cover object-center md:h-[52rem] xl:h-[38.75rem]"
+                      alt={`${slide.alt} 배너 배경`}
+                      src={load ? carouselBg(slide.slug, "mobile") : undefined}
+                      loading={isFirst ? "eager" : "lazy"}
+                      fetchPriority={isFirst ? "high" : undefined}
+                    />
+                  </picture>
+                  {/* 텍스트 오버레이 — <picture>로 디바이스별 단일 다운로드 */}
+                  <div className="absolute inset-0 mx-auto h-full w-full max-w-[80rem]">
+                    <picture>
+                      <source
+                        media="(min-width: 1280px)"
+                        srcSet={load ? carouselText(slide.slug, "pc") : undefined}
+                      />
+                      <source
+                        media="(min-width: 768px)"
+                        srcSet={load ? carouselText(slide.slug, "tablet") : undefined}
+                      />
+                      <img
+                        className="absolute bottom-12 left-1/2 top-1/2 z-10 max-w-[23.4375rem] -translate-x-1/2 -translate-y-1/2 md:max-w-[48rem] xl:max-w-none"
+                        alt={`${slide.alt} 텍스트`}
+                        src={load ? carouselText(slide.slug, "mobile") : undefined}
+                        loading={isFirst ? "eager" : "lazy"}
+                      />
+                    </picture>
+                  </div>
                 </div>
-              </div>
-            </a>
-          </SwiperSlide>
-        ))}
+              </a>
+            </SwiperSlide>
+          );
+        })}
       </Swiper>
 
       {/* 도트 인디케이터 + 자동재생 버튼 */}

@@ -47,13 +47,13 @@ export default function SajuTable({ data: d, decorations }: SajuTableProps) {
             <div className="flex flex-col items-center justify-center border-b border-r-2 border-b-[#8A8A8A] border-r-black text-xs">天干<div className="mt-0.5 font-gyeonggibatang text-[0.5rem] leading-none">(천간)</div></div>
             {d.cheongan.map((ch, i) => (
               <div key={`cg-${i}`} className={`flex items-center justify-center border-b border-b-[#8A8A8A] bg-white p-1 ${i < 3 ? "border-r border-r-[#8A8A8A]" : ""}`}>
-                <img alt={ch} src={kanjiImg(ch)} />
+                <img alt={ch} src={kanjiImg(ch)} loading="lazy" />
               </div>
             ))}
             <div className="flex flex-col items-center justify-center border-r-2 border-r-black text-xs">地支<div className="mt-0.5 font-gyeonggibatang text-[0.5rem] leading-none">(지지)</div></div>
             {d.jiji.map((ji, i) => (
               <div key={`jj-${i}`} className={`flex items-center justify-center bg-white p-1 ${i < 3 ? "border-r border-r-[#8A8A8A]" : ""}`}>
-                <img alt={ji} src={kanjiImg(ji)} />
+                <img alt={ji} src={kanjiImg(ji)} loading="lazy" />
               </div>
             ))}
           </div>

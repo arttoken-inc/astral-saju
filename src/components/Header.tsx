@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 interface HeaderProps {
   isDark?: boolean;
 }
@@ -14,10 +16,13 @@ export default function Header({ isDark = true }: HeaderProps) {
     <header className="inset-x-0 top-0 z-50 flex justify-center h-[3.75rem] md:h-20 absolute bg-transparent">
       <div className="flex w-full items-center justify-between px-5 md:px-10 xl:max-w-7xl xl:px-5">
         <a className="flex items-center gap-2" href="/">
-          <img
+          <Image
             src={logoSrc}
             alt="logo"
+            width={120}
+            height={32}
             className="h-6 w-auto md:h-8"
+            priority
           />
         </a>
         <div className="flex items-center gap-1">

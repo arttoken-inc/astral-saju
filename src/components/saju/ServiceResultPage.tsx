@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 import type { ServiceConfig, ResultSection } from "@/lib/serviceConfig";
 import { replaceTemplate } from "@/lib/templateReplace";
 import { cdnUrl } from "@/lib/cdn";
@@ -14,7 +15,7 @@ function ResultHeader() {
     <header className="fixed inset-x-0 top-0 z-50 flex justify-center h-[3.75rem] bg-white mx-auto max-w-md">
       <div className="flex w-full items-center justify-between px-5">
         <a className="flex items-center gap-2" href="/">
-          <img src="/logos/logo_with_black_typo.png" alt="logo" className="h-6 w-auto" />
+          <Image src="/logos/logo_with_black_typo.png" alt="logo" width={120} height={24} className="h-6 w-auto" priority />
         </a>
         <a className="flex h-7 w-7 items-center justify-center text-[#111111]" href="/mypage">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -40,14 +41,14 @@ function SectionRenderer({ section, config, vars }: { section: ResultSection; co
     case "image":
       return (
         <div className={section.className || "relative"}>
-          <img className="w-full" alt="" src={cdnUrl(section.image)} />
+          <img className="w-full" alt="" src={cdnUrl(section.image)} loading="lazy" />
         </div>
       );
 
     case "image-with-text":
       return (
         <div className={section.className || "relative"}>
-          <img className="w-full" alt="" src={cdnUrl(section.image)} />
+          <img className="w-full" alt="" src={cdnUrl(section.image)} loading="lazy" />
           {section.texts.map((txt, i) => (
             <p key={i} className={TEXT_CLASS} style={txt.style as React.CSSProperties}>
               {t(txt.content).split("\n").map((line, j) => (
@@ -62,7 +63,7 @@ function SectionRenderer({ section, config, vars }: { section: ResultSection; co
       return (
         <div className={section.className}>
           {section.images.map((img, i) => (
-            <img key={i} className="w-full" alt="" src={cdnUrl(img)} />
+            <img key={i} className="w-full" alt="" src={cdnUrl(img)} loading="lazy" />
           ))}
         </div>
       );
@@ -70,7 +71,7 @@ function SectionRenderer({ section, config, vars }: { section: ResultSection; co
     case "saju-table":
       return (
         <div className={section.className}>
-          <img alt="" src={cdnUrl(section.bubbleImage)} className="mx-auto mb-4" style={{ width: section.bubbleWidth }} />
+          <img alt="" src={cdnUrl(section.bubbleImage)} className="mx-auto mb-4" style={{ width: section.bubbleWidth }} loading="lazy" />
           <CardWrapper>
             <SajuTable data={config.sampleData} decorations={config.decorations} />
           </CardWrapper>
@@ -80,12 +81,12 @@ function SectionRenderer({ section, config, vars }: { section: ResultSection; co
     case "daeun-table":
       return (
         <div className={section.className}>
-          <img alt="" src={cdnUrl(section.bubbleImages[0])} className="mx-auto mb-4" style={{ width: section.bubbleWidths[0] }} />
+          <img alt="" src={cdnUrl(section.bubbleImages[0])} className="mx-auto mb-4" style={{ width: section.bubbleWidths[0] }} loading="lazy" />
           <CardWrapper>
             <DaeunTable data={config.sampleData} daeun={config.daeunData} decorations={config.decorations} />
           </CardWrapper>
           {section.bubbleImages[1] && (
-            <img alt="" src={cdnUrl(section.bubbleImages[1])} className="mx-auto mt-4" style={{ width: section.bubbleWidths[1] }} />
+            <img alt="" src={cdnUrl(section.bubbleImages[1])} className="mx-auto mt-4" style={{ width: section.bubbleWidths[1] }} loading="lazy" />
           )}
         </div>
       );
@@ -93,7 +94,7 @@ function SectionRenderer({ section, config, vars }: { section: ResultSection; co
     case "ohaeng":
       return (
         <div className={section.className}>
-          <img alt="" src={cdnUrl(section.bubbleImage)} className="mx-auto mb-4" style={{ width: section.bubbleWidth }} />
+          <img alt="" src={cdnUrl(section.bubbleImage)} className="mx-auto mb-4" style={{ width: section.bubbleWidth }} loading="lazy" />
           <CardWrapper>
             <OhaengSection data={config.sampleData} ohaeng={config.ohaengData} decorations={config.decorations} />
           </CardWrapper>
@@ -120,15 +121,15 @@ function SectionRenderer({ section, config, vars }: { section: ResultSection; co
             <div className="absolute left-2 h-full w-[1px] bg-[#2B557E]" />
             <div className="absolute right-2 h-full w-[1px] bg-[#2B557E]" />
             <div className="absolute z-0 mt-6 flex w-full justify-between px-2">
-              <img alt="" className="mt-5 h-[2.375rem] w-[3.5rem]" src={decs.leftCloud} />
-              <img alt="" className="mb-5 h-[2.375rem] w-[3.5rem]" src={decs.rightCloud} />
+              <img alt="" className="mt-5 h-[2.375rem] w-[3.5rem]" src={decs.leftCloud} loading="lazy" />
+              <img alt="" className="mb-5 h-[2.375rem] w-[3.5rem]" src={decs.rightCloud} loading="lazy" />
             </div>
             <div className="relative" style={{ zIndex: 1 }}>
               <div className="px-5 py-10">
                 <h3 className="text-center font-gapyeong text-xl font-bold leading-none">{t(section.title)}</h3>
                 <div className="mx-2 mb-10 mt-10 overflow-hidden rounded-3xl border-4 border-[#BDCEED]">
                   <div className="relative w-full" style={{ aspectRatio: "295 / 446" }}>
-                    <img className="h-full w-full object-cover" alt="" src={cdnUrl(decs.dreamPerson)} />
+                    <img className="h-full w-full object-cover" alt="" src={cdnUrl(decs.dreamPerson)} loading="lazy" />
                   </div>
                 </div>
                 <div className="w-full border-b border-[#A1A1A1]" />
@@ -165,7 +166,7 @@ function SectionRenderer({ section, config, vars }: { section: ResultSection; co
             ))}
           </div>
           <div className="text-center font-gapyeong text-base font-bold">{t(section.title)}</div>
-          <img alt="" className="mt-4 w-full" src={cdnUrl(config.decorations.maskedWealthGraph)} />
+          <img alt="" className="mt-4 w-full" src={cdnUrl(config.decorations.maskedWealthGraph)} loading="lazy" />
         </div>
       );
 
@@ -190,7 +191,7 @@ function SectionRenderer({ section, config, vars }: { section: ResultSection; co
       return (
         <div className="relative">
           <div className="relative" style={{ aspectRatio: section.aspectRatio }}>
-            <img className="h-full w-full object-cover" alt="" src={cdnUrl(section.image)} />
+            <img className="h-full w-full object-cover" alt="" src={cdnUrl(section.image)} loading="lazy" />
           </div>
           <div className="absolute inset-x-0 w-full -translate-y-1/2" style={{ top: section.buttonPosition.top, height: section.buttonPosition.height, paddingLeft: section.buttonPosition.px, paddingRight: section.buttonPosition.px }}>
             <button className="z-10 h-full w-full rounded-b-3xl bg-transparent" />
@@ -207,21 +208,20 @@ function SectionRenderer({ section, config, vars }: { section: ResultSection; co
 }
 
 function StickyPaymentBar({ visible, buttonColor, buttonText }: { visible: boolean; buttonColor: string; buttonText: string }) {
-  const [time, setTime] = useState({ h: 10, m: 31, s: 47, ms: 78 });
+  const [time, setTime] = useState({ h: 10, m: 31, s: 47 });
 
   useEffect(() => {
     if (!visible) return;
     const interval = setInterval(() => {
       setTime((prev) => {
-        let { h, m, s, ms } = prev;
-        ms -= 1;
-        if (ms < 0) { ms = 99; s -= 1; }
+        let { h, m, s } = prev;
+        s -= 1;
         if (s < 0) { s = 59; m -= 1; }
         if (m < 0) { m = 59; h -= 1; }
-        if (h < 0) return { h: 0, m: 0, s: 0, ms: 0 };
-        return { h, m, s, ms };
+        if (h < 0) return { h: 0, m: 0, s: 0 };
+        return { h, m, s };
       });
-    }, 10);
+    }, 1000);
     return () => clearInterval(interval);
   }, [visible]);
 
@@ -235,8 +235,8 @@ function StickyPaymentBar({ visible, buttonColor, buttonText }: { visible: boole
     >
       <div className="mb-3 flex items-center justify-center gap-1 text-center text-sm text-white">
         <div>할인혜택 종료까지</div>
-        <div className="w-[5.125rem] text-start font-bold text-[#FDE047]">
-          {pad(time.h)}:{pad(time.m)}:{pad(time.s)}:{pad(time.ms)}
+        <div className="text-start font-bold text-[#FDE047]">
+          {pad(time.h)}:{pad(time.m)}:{pad(time.s)}
         </div>
       </div>
       <button

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { cdnUrl } from "@/lib/cdn";
 
 interface ServiceCardProps {
@@ -11,10 +12,14 @@ export default function ServiceCard({ title, desc, href, img }: ServiceCardProps
   return (
     <a className="block w-full" href={href}>
       <div className="relative w-full">
-        <img
+        <Image
           className="w-full object-cover"
           alt={title}
           src={cdnUrl(img)}
+          width={400}
+          height={533}
+          sizes="(min-width: 1280px) 25vw, 50vw"
+          loading="lazy"
         />
       </div>
       <h3 className="ml-1 mt-3 truncate font-pretendard text-lg font-semibold leading-[130%] text-[#111111] md:mt-5 md:text-2xl">

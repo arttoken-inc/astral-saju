@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Image from "next/image";
 import type { ServiceConfig, Step, FormField, FormStep } from "@/lib/serviceConfig";
 import StepLayout, { PrevButton, CTAButton } from "./StepLayout";
 import TextField from "./fields/TextField";
@@ -19,7 +20,7 @@ function SajuHeader() {
     <header className="inset-x-0 top-0 z-50 flex justify-center h-[3.75rem] absolute bg-transparent mx-auto max-w-md">
       <div className="flex w-full items-center justify-between px-5">
         <a className="flex items-center gap-2" href="/">
-          <img src="/logos/logo_with_white_typo.png" alt="logo" className="h-6 w-auto" />
+          <Image src="/logos/logo_with_white_typo.png" alt="logo" width={120} height={24} className="h-6 w-auto" priority />
         </a>
         <a className="flex h-7 w-7 items-center justify-center text-white" href="/mypage">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -94,10 +95,8 @@ function StepContent({ config }: { config: ServiceConfig }) {
 
       // 3) Fade in
       requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          setOpacity(1);
-          isTransitioning.current = false;
-        });
+        setOpacity(1);
+        isTransitioning.current = false;
       });
     }, TRANSITION_MS);
   };
@@ -117,7 +116,7 @@ function StepContent({ config }: { config: ServiceConfig }) {
           <div className="absolute inset-0 h-full w-full">
             <div className="relative h-full w-full [&>video]:h-full [&>video]:object-cover [&>video]:object-top">
               {step.bgType === "video" ? (
-                <video className="w-full" muted loop autoPlay playsInline poster={cdnUrl(step.bgPoster ?? "")}>
+                <video className="w-full" muted loop autoPlay playsInline preload="metadata" poster={cdnUrl(step.bgPoster ?? "")}>
                   <source src={cdnUrl(step.bgSrc)} type="video/mp4" />
                   <img src={cdnUrl(step.bgPoster ?? "")} alt="배경" className="w-full" />
                 </video>

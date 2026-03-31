@@ -1,11 +1,16 @@
+import Image from "next/image";
+
 export default function Footer() {
   return (
     <footer className="bg-[#F7F9FA] px-4 py-10 md:px-10 md:py-[60px]">
       <div className="w-full xl:mx-auto xl:max-w-[77.5rem]">
-        <img
+        <Image
           src="/logos/logo_with_black_typo.png"
           alt="logo"
+          width={120}
+          height={32}
           className="mx-auto mb-7 h-6 w-auto md:mx-0 md:mb-9 md:h-8"
+          loading="lazy"
         />
         <div className="flex flex-col items-center justify-center gap-3 font-pretendard text-[0.625rem] text-[#A1A1A1] md:items-start md:text-xs">
           <div className="flex flex-col items-center gap-1 md:flex-row md:items-start md:gap-0">

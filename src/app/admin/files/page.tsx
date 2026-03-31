@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 
-const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL ?? "";
+import { CDN_BASE as CDN_URL } from "@/lib/cdn";
 
 interface R2File {
   key: string;

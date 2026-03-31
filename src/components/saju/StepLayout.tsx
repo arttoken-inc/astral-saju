@@ -1,6 +1,7 @@
 "use client";
 
 import { ReactNode } from "react";
+import Image from "next/image";
 
 interface StepLayoutProps {
   bgType: "image" | "video";
@@ -35,7 +36,7 @@ export default function StepLayout({
       <header className="inset-x-0 top-0 z-50 flex justify-center h-[3.75rem] absolute bg-transparent mx-auto max-w-md">
         <div className="flex w-full items-center justify-between px-5">
           <a className="flex items-center gap-2" href="/">
-            <img src="/logos/logo_with_white_typo.png" alt="logo" className="h-6 w-auto" />
+            <Image src="/logos/logo_with_white_typo.png" alt="logo" width={120} height={24} className="h-6 w-auto" priority />
           </a>
           <a className="flex h-7 w-7 items-center justify-center text-white" href="/mypage">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -56,6 +57,7 @@ export default function StepLayout({
                 loop
                 autoPlay
                 playsInline
+                preload="metadata"
                 poster={videoPoster}
               >
                 <source src={bgSrc} type="video/mp4" />
@@ -72,6 +74,7 @@ export default function StepLayout({
             alt="배경"
             className="absolute inset-0 h-full w-full object-cover"
             src={bgSrc}
+            loading="eager"
           />
         )}
       </div>

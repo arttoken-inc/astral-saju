@@ -23,8 +23,10 @@ interface OhaengSectionProps {
   decorations: Decorations;
 }
 
+import { useMemo } from "react";
+
 export default function OhaengSection({ data, ohaeng: oh, decorations }: OhaengSectionProps) {
-  const maxRatio = Math.max(...oh.ratio.map((r) => r.value));
+  const maxRatio = useMemo(() => Math.max(...oh.ratio.map((r) => r.value)), [oh.ratio]);
 
   return (
     <SajuCard decorations={decorations}>
@@ -40,8 +42,8 @@ export default function OhaengSection({ data, ohaeng: oh, decorations }: OhaengS
             <InfoButton />
           </div>
           <div className="relative mx-1">
-            <img alt="" className="w-full" src={cdnUrl(decorations.fiveCircle)} />
-            <img alt="" className="absolute left-1 top-0 h-[32px] w-[51px]" src={cdnUrl(decorations.fiveCircleLegend)} />
+            <img alt="" className="w-full" src={cdnUrl(decorations.fiveCircle)} loading="lazy" />
+            <img alt="" className="absolute left-1 top-0 h-[32px] w-[51px]" src={cdnUrl(decorations.fiveCircleLegend)} loading="lazy" />
             {oh.distribution.map((count, i) => {
               const positions = [
                 { left: "49.1%", top: "21.8%" },
@@ -104,7 +106,7 @@ export default function OhaengSection({ data, ohaeng: oh, decorations }: OhaengS
                     <span className="font-pretendard text-sm font-semibold">{item.label}</span>
                     <InfoButton />
                   </div>
-                  <img alt={item.name} src={yongsinImg(item.name)} className="h-12 w-12" />
+                  <img alt={item.name} src={yongsinImg(item.name)} className="h-12 w-12" loading="lazy" />
                 </div>
               ))}
             </div>
@@ -116,7 +118,7 @@ export default function OhaengSection({ data, ohaeng: oh, decorations }: OhaengS
         <div>
           <h4 className="mb-4 font-pretendard text-base font-bold text-[#111111]">신강신약</h4>
           <div className="flex flex-col items-center">
-            <img alt="" src={cdnUrl(decorations.strengthDiagram)} className="w-[274px]" />
+            <img alt="" src={cdnUrl(decorations.strengthDiagram)} className="w-[274px]" loading="lazy" />
             <div className="mt-2 flex w-[274px] justify-between font-pretendard text-[0.625rem] text-[#757575]">
               {["극약", "태약", "신약", "중화", "신강", "태강", "극왕"].map((label) => (
                 <span key={label}>{label}</span>
