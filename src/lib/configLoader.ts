@@ -30,47 +30,35 @@ export async function loadServiceConfig(
 }
 
 /**
- * Landing config types
+ * Landing config types — matches src/data/landing.ts exports
  */
-export interface LandingCarouselSlide {
-  slug: string;
-  href: string;
-  alt: string;
-  dark: boolean;
-}
+export type {
+  CarouselSlide,
+  RecommendCard,
+  CategoryCard,
+  CategorySection,
+  SnackCard,
+  CelebrityPost,
+  DreamPost,
+} from "@/data/landing";
 
-export interface LandingCard {
-  title: string;
-  desc: string;
-  href: string;
-  img: string;
-}
-
-export interface LandingDreamPost {
-  title: string;
-  body: string;
-  href: string;
-}
-
-export interface LandingCelebrity {
-  name: string;
-  title: string;
-  body: string;
-  img: string;
-  href: string;
-}
+import type {
+  CarouselSlide,
+  RecommendCard,
+  CategorySection,
+  SnackCard,
+  CelebrityPost,
+  DreamPost,
+} from "@/data/landing";
 
 export interface LandingConfig {
-  carouselSlides: LandingCarouselSlide[];
-  bestCards: LandingCard[];
-  fortuneCards: LandingCard[];
-  dreamPosts: LandingDreamPost[];
-  celebrities: LandingCelebrity[];
-  assets: {
-    replayMobileImg: string;
-    replayPcImg: string;
-    promoVideoSrc: string;
-  };
+  carouselSlides: CarouselSlide[];
+  recommendCards: RecommendCard[];
+  categorySections: CategorySection[];
+  snackCards: SnackCard[];
+  celebrities: CelebrityPost[];
+  dreamPosts: DreamPost[];
+  promoVideoSrc: string;
 }
 
 /**
@@ -90,20 +78,15 @@ export async function loadLandingConfig(): Promise<LandingConfig> {
     // R2 not available, fall through
   }
 
-  // Fallback: import from bundled data.
-  // landing.ts stores relative CDN paths; components apply cdnUrl() at render time.
   const landing = await import("@/data/landing");
 
   return {
     carouselSlides: landing.carouselSlides,
-    bestCards: landing.bestCards,
-    fortuneCards: landing.fortuneCards,
-    dreamPosts: landing.dreamPosts,
+    recommendCards: landing.recommendCards,
+    categorySections: landing.categorySections,
+    snackCards: landing.snackCards,
     celebrities: landing.celebrities,
-    assets: {
-      replayMobileImg: landing.replayMobileImg,
-      replayPcImg: landing.replayPcImg,
-      promoVideoSrc: landing.promoVideoSrc,
-    },
+    dreamPosts: landing.dreamPosts,
+    promoVideoSrc: landing.promoVideoSrc,
   };
 }

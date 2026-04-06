@@ -7,9 +7,9 @@ export default function Footer() {
         <Image
           src="/logos/logo_with_black_typo.png"
           alt="logo"
-          width={120}
-          height={32}
-          className="mx-auto mb-7 h-6 w-auto md:mx-0 md:mb-9 md:h-8"
+          width={83}
+          height={24}
+          className="mx-auto mb-7 h-6 w-auto"
           loading="lazy"
         />
         <div className="flex flex-col items-center justify-center gap-3 font-pretendard text-[0.625rem] text-[#A1A1A1] md:items-start md:text-xs">

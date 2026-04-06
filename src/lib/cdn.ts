@@ -1,5 +1,5 @@
 const CDN_ORIGIN =
-  process.env.NEXT_PUBLIC_CDN_URL ?? "https://cdn.aifortunedoctor.com";
+  process.env.NEXT_PUBLIC_CDN_URL ?? "https://pub-591262c36896460c9feb02c0ef3769dc.r2.dev";
 
 // In local dev, proxy through Next.js rewrites to avoid CORS / ORB blocking.
 export const CDN_BASE =

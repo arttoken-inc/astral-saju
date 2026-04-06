@@ -14,5 +14,11 @@
       "binding": "R2",
       "bucket_name": "astral-saju-cdn"
     }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "SAJU_KV",
+      "id": "PLACEHOLDER_CREATE_WITH_WRANGLER"
+    }
   ]
 }

@@ -2,7 +2,6 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { cdnUrl } from "@/lib/cdn";
 
 export default function AuthLoadingPage() {
   const router = useRouter();
@@ -20,7 +19,7 @@ export default function AuthLoadingPage() {
       <header className="fixed inset-x-0 top-0 z-50 mx-auto flex h-[3.75rem] max-w-md items-center justify-between bg-white px-4">
         <a href="/">
           <img
-            src={cdnUrl("logos/logo_with_black_typo.png")}
+            src="/logos/logo_with_black_typo.png"
             alt="청월당"
             className="h-6"
           />

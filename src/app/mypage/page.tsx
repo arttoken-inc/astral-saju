@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { auth, signOut } from "@/auth";
 import Link from "next/link";
+import Image from "next/image";
 import { cdnUrl } from "@/lib/cdn";
 
 export const metadata: Metadata = {
@@ -16,10 +17,13 @@ export default async function MyPage() {
       {/* 헤더 - X 닫기 버튼 + 하단 보더 */}
       <header className="fixed inset-x-0 top-0 z-50 mx-auto flex h-[3.75rem] max-w-md items-center justify-between border-b border-[#E1E1E1] bg-white px-4">
         <a href="/">
-          <img
-            src={cdnUrl("logos/logo_with_black_typo.png")}
+          <Image
+            src="/logos/logo_with_black_typo.png"
             alt="청월당"
-            className="h-6"
+            width={120}
+            height={24}
+            className="h-6 w-auto"
+            priority
           />
         </a>
         <a href="/" aria-label="마이페이지 닫기">
@@ -187,10 +191,12 @@ export default async function MyPage() {
         {/* 푸터 */}
         <footer className="w-full bg-[#F7F9FA] px-4 py-10">
           <div className="flex flex-col items-center">
-            <img
-              src={cdnUrl("logos/logo_with_black_typo.png")}
+            <Image
+              src="/logos/logo_with_black_typo.png"
               alt="청월당"
-              className="mb-4 h-5"
+              width={100}
+              height={20}
+              className="mb-4 h-5 w-auto"
             />
             <div className="text-center font-pretendard text-[0.625rem] leading-relaxed text-[#A1A1A1]">
               <p>상호 로켓AI | 대표이사 임재운</p>
