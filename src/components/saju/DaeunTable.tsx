@@ -1,13 +1,24 @@
-import type { SajuData, DaeunData, Decorations } from "@/lib/serviceConfig";
+import type { SajuDisplayData, DaeunDisplayData } from "@/lib/sajuDisplayTypes";
+import type { Decorations } from "@/lib/serviceConfig";
 import SajuCard from "./SajuCard";
 
 interface DaeunTableProps {
-  data: SajuData;
-  daeun: DaeunData;
+  data: SajuDisplayData | null;
+  daeun: DaeunDisplayData | null;
   decorations: Decorations;
 }
 
 export default function DaeunTable({ data, daeun: d, decorations }: DaeunTableProps) {
+  if (!data || !d) {
+    return (
+      <SajuCard decorations={decorations}>
+        <div className="px-6 py-10 text-center font-pretendard text-sm text-gray-400">
+          사주 분석 후 대운표가 표시됩니다
+        </div>
+      </SajuCard>
+    );
+  }
+
   return (
     <SajuCard decorations={decorations}>
       <div className="px-6 py-10">

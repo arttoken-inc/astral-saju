@@ -87,6 +87,7 @@ export interface SajuResult {
     directional: RelationItem[];
   };
   ohang: Record<Element, number>;
+  ohangWeighted: Record<Element, number>;
   specialSals: {
     yangin: number[];
     baekho: boolean;
@@ -174,7 +175,7 @@ const SIPSIN_HANJA: Record<string, string> = {
 
 /** 12운성 한글→한자 매핑 */
 const UNSEONG_HANJA: Record<string, string> = {
-  '장생': '長生', '목욕': '沐浴', '관대': '冠帶', '건록': '乾祿',
+  '장생': '長生', '목욕': '沐浴', '관대': '冠帶', '건록': '建祿',
   '제왕': '帝旺', '쇠': '衰', '병': '病', '사': '死',
   '묘': '墓', '절': '絶', '태': '胎', '양': '養',
 };
@@ -250,6 +251,23 @@ const HIDDEN_STEMS_TABLE: string[][] = [
   ['庚', '辛'],           // 酉: 경, 신(정기)
   ['辛', '丁', '戊'],     // 戌: 신, 정, 무(정기)
   ['戊', '甲', '壬'],     // 亥: 무, 갑, 임(정기)
+];
+
+// ── 지장간 가중치 (30점 배분) ──
+// [천간한자, 점수][] — 여기/중기/정기 순
+const JIJANG_WEIGHTS: [string, number][][] = [
+  [['壬', 10], ['癸', 20]],                     // 子
+  [['癸', 9], ['辛', 3], ['己', 18]],           // 丑
+  [['戊', 7], ['丙', 7], ['甲', 16]],           // 寅
+  [['甲', 10], ['乙', 20]],                     // 卯
+  [['乙', 9], ['癸', 3], ['戊', 18]],           // 辰
+  [['戊', 7], ['庚', 7], ['丙', 16]],           // 巳
+  [['丙', 10], ['己', 10], ['丁', 10]],         // 午
+  [['丁', 9], ['乙', 3], ['己', 18]],           // 未
+  [['戊', 7], ['壬', 7], ['庚', 16]],           // 申
+  [['庚', 10], ['辛', 20]],                     // 酉
+  [['辛', 9], ['丁', 3], ['戊', 18]],           // 戌
+  [['戊', 7], ['甲', 7], ['壬', 16]],           // 亥
 ];
 
 // ── 천간 합(天干合) ──
@@ -913,9 +931,9 @@ export function calculateSaju(input: BirthInput): SajuResult {
     // 12운성
     const unseong = getTwelveMeteor(dayStemHanja, branch);
 
-    // 12신살 (연지 기준)
-    const yearBranch = ganziArr[3][1]; // 연주의 지지
-    const spirit = getTwelveSpirit(yearBranch, branch);
+    // 12신살 (일지 기준 — 전통 방식)
+    const dayBranch = ganziArr[1][1]; // 일주의 지지
+    const spirit = getTwelveSpirit(dayBranch, branch);
 
     return {
       pillar,
@@ -934,13 +952,31 @@ export function calculateSaju(input: BirthInput): SajuResult {
   // 4. 합충형파해 관계 분석
   const relations = analyzeRelations(ganziArr);
 
-  // 5. 오행 분포 계산
+  // 5. 오행 분포 계산 (지장간 가중치 반영)
   const ohang: Record<Element, number> = { wood: 0, fire: 0, earth: 0, metal: 0, water: 0 };
+  // 단순 카운트 (천간+지지 각 8자)
   ganziArr.forEach(ganzi => {
     const sElement = STEM_ELEMENT[stemIndex(ganzi[0])];
     const bElement = BRANCH_ELEMENT[branchIndex(ganzi[1])];
     ohang[sElement]++;
     ohang[bElement]++;
+  });
+
+  // 지장간 가중치 기반 오행 분포 (ohangWeighted)
+  const ohangWeighted: Record<Element, number> = { wood: 0, fire: 0, earth: 0, metal: 0, water: 0 };
+  // 천간: 각 12점
+  ganziArr.forEach(ganzi => {
+    const sElement = STEM_ELEMENT[stemIndex(ganzi[0])];
+    ohangWeighted[sElement] += 12;
+  });
+  // 지지: 지장간 가중치 (30점 배분)
+  ganziArr.forEach(ganzi => {
+    const bIdx = branchIndex(ganzi[1]);
+    const weights = JIJANG_WEIGHTS[bIdx];
+    for (const [stemChar, weight] of weights) {
+      const sIdx = stemIndex(stemChar);
+      if (sIdx >= 0) ohangWeighted[STEM_ELEMENT[sIdx]] += weight;
+    }
   });
 
   // 6. 특수 신살
@@ -952,6 +988,7 @@ export function calculateSaju(input: BirthInput): SajuResult {
     daewoon,
     relations,
     ohang,
+    ohangWeighted,
     specialSals,
   };
 }

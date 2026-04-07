@@ -1,0 +1,228 @@
+{
+  "meta": {
+    "serviceId": "bluemoonladysaju",
+    "version": "1.0.0",
+    "serviceTitle": "청월아씨 정통사주",
+    "pageTitle": "청월아씨 정통사주 - 청월당 프리미엄 사주 웹툰 | 청월당 사주",
+    "price": 19900,
+    "description": "정통 사주명리학 기반 종합 사주 분석",
+    "thumbnails": {
+      "banner": "thumbnails/banner.png",
+      "card": "thumbnails/card.png",
+      "rankBadge": "thumbnails/rank_badge.png"
+    }
+  },
+
+  "character": {
+    "id": "cheongwol",
+    "name": "청월",
+    "displayName": "청월아씨",
+    "avatar": "main/avatar.png",
+    "tone": "존댓말, 따뜻하고 신비로운 톤"
+  },
+
+  "theme": {
+    "primary": "#04336D",
+    "cardBorder": "#1B2F49",
+    "cardBg": "#F5F3EC",
+    "cardAccent": "#2B557E",
+    "resultBg": "#F3F2EF",
+    "font": "gapyeong"
+  },
+
+  "prompts": {
+    "preview": {
+      "system": "당신은 청월아씨입니다. 한국 전통 사주명리학 전문가로서 따뜻하고 신비로운 톤으로 말합니다.\n\n## 규칙\n- \"{name}님\"으로 호칭\n- 150자 이내 간결한 요약\n- 전체 분석은 유료에서 확인할 수 있다는 뉘앙스\n- 존댓말 사용, 따뜻하고 격려하는 톤",
+      "user": "이름: {name}\n사주: {fourPillars}\n일간: {dayMaster}\n오행: {elements}\n\n위 데이터를 바탕으로 핵심 성격과 올해의 운세를 2-3문장으로 매우 간결하게 요약해주세요."
+    },
+    "fullAnalysis": {
+      "system": "당신은 청월아씨입니다. 30년 경력의 한국 전통 사주명리학 전문가.\n\n## 말투\n- 존댓말 사용, \"{name}님\"으로 호칭\n- 따뜻하고 격려하는 톤\n- 신비롭지만 구체적인 조언\n\n## 한자 표기 규칙\n한자를 쓸 때 반드시 한글 독음과 뜻을 함께 써야 합니다.\n- 예: \"午(오, 말🐴)\"\n- 예: \"편관(偏官)은 쉽게 말해 나를 강하게 압박하는 에너지예요.\"\n\n## 분석 원칙\n1. 사주명리학 + 자미두수 + 서양 점성술 통합 분석\n2. 긍정적인 면과 주의할 점 균형\n3. 각 섹션 500-1500자\n4. 추측 금지, 데이터 기반 단정적 분석\n5. 미신적 공포감을 주는 표현 금지\n6. 반드시 \"{name}님\"으로 호칭\n7. 월별 운세 각 월마다 최소 100자 이상\n\n## 고민 분야별 상세 분석 지시\n사용자가 관심을 표시한 분야는 다른 섹션보다 2배 이상 상세하게 작성하세요.\n{concernInstructions}\n\n## 작성 지침\n- \"personality\" 섹션 첫 문장에 \"{name}님\"으로 시작, 일주 이름 명시\n- 각 섹션에서 사주 용어를 자연스럽게 활용\n- 오행 균형/불균형에 따른 구체적 조언 포함\n\n## 응답 형식\n반드시 아래 JSON 형식으로만 응답하세요.\n{outputSchema}",
+      "user": "## 분석 대상\n- 이름: {name} / 성별: {gender}\n- 생년월일: {birthDate} {birthTime}\n- 나이: 만 {westernAge}세, 한국 나이 {koreanAge}세\n- 관심 분야: {concerns}\n\n## 사주 데이터\n- 사주팔자 (한글): {fourPillarsKorean}\n- 사주팔자 (한자): {fourPillarsHanja}\n- 일간: {dayMaster}\n- 성격 키워드: {personalityKeywords}\n\n## 오행 분포\n- 목(木): {wood}개 / 화(火): {fire}개 / 토(土): {earth}개 / 금(金): {metal}개 / 수(水): {water}개\n- 가장 강한 오행: {strongest} / 가장 약한 오행: {weakest}\n- 균형 상태: {balance}\n\n## 사주 기둥 상세\n{pillarDetails}\n\n{advancedContext}\n\n위 데이터를 바탕으로 {currentYear}년 종합 사주분석을 JSON으로 작성해주세요.",
+      "outputSchema": {
+        "personality": "성격 분석 (500-1500자)",
+        "tenGods": "십신 분석 (500-1000자)",
+        "love": "연애/결혼운 (500-1500자)",
+        "career": "직업/진로 (500-1500자)",
+        "wealth": "재물운 (500-1500자)",
+        "health": "건강 (500-1000자)",
+        "relationship": "대인관계 (500-1000자)",
+        "majorCycles": "대운 흐름 (500-1000자)",
+        "yearlyFortune": "올해 운세 (500-1500자)",
+        "monthlyFortune": [{ "month": 1, "fortune": "100자 이상" }],
+        "luckyElements": { "color": "", "direction": "", "number": "" },
+        "actionAdvice": "실천 조언 (500-1000자)",
+        "summary": "종합 요약 (200-400자)"
+      }
+    },
+    "compatibility": null
+  },
+
+  "dynamicImages": {
+    "dreamPerson": {
+      "pattern": "components/day_person/romance/best/masked/{gender}_{ilgan}_{strength}.png",
+      "variables": {
+        "gender": { "source": "input.gender", "map": { "남성": "FEMALE", "여성": "MALE" } },
+        "ilgan": { "source": "saju.dayMaster.korean" },
+        "strength": { "source": "saju.strength" }
+      },
+      "fallback": "components/day_person/romance/best/masked/FEMALE_%EC%9D%84_%EC%8B%A0%EA%B0%95.png"
+    },
+    "wealthGraph": {
+      "pattern": "s/bluemoonladysaju/result/masked-wealth-graph.png",
+      "variables": {},
+      "fallback": "s/bluemoonladysaju/result/masked-wealth-graph.png"
+    }
+  },
+
+  "steps": [
+    {
+      "id": "home",
+      "type": "hero",
+      "bgType": "video",
+      "bgSrc": "main/video/main_video.mp4",
+      "bgPoster": "main/step_home.png",
+      "titleImage": "main/step_home_title.png",
+      "next": "intro",
+      "topGradient": {
+        "height": 130,
+        "from": "rgba(17,17,17,0.5)"
+      }
+    },
+    {
+      "id": "intro",
+      "type": "fullscreen-image",
+      "bgSrc": "main/step_intro.png",
+      "prev": "home",
+      "next": "info"
+    },
+    {
+      "id": "info",
+      "type": "form",
+      "stepNumber": 1,
+      "totalSteps": 3,
+      "bgSrc": "main/step_info.png",
+      "prev": "intro",
+      "next": "middle",
+      "fields": [
+        { "key": "name", "type": "text", "maxLength": 10 },
+        { "key": "birthdate", "type": "birthdate" },
+        { "key": "birthtime", "type": "time-select" },
+        { "key": "gender", "type": "button-group", "options": ["남성", "여성"] }
+      ]
+    },
+    {
+      "id": "middle",
+      "type": "fullscreen-image",
+      "bgSrc": "main/step_middle.png",
+      "prev": "info",
+      "next": "step1"
+    },
+    {
+      "id": "step1",
+      "type": "form",
+      "stepNumber": 2,
+      "totalSteps": 3,
+      "bgSrc": "main/step_1.png",
+      "prev": "middle",
+      "next": "step2",
+      "fields": [
+        { "key": "loveStatus", "type": "select", "optional": true, "options": ["연애중", "솔로", "기혼"] },
+        { "key": "loveDuration", "type": "select", "optional": true, "options": ["1년 미만", "1~3년", "3~5년", "5~10년", "10년 이상"], "showWhen": { "field": "loveStatus", "values": ["연애중", "기혼"] } }
+      ]
+    },
+    {
+      "id": "step2",
+      "type": "form",
+      "stepNumber": 3,
+      "totalSteps": 3,
+      "bgSrc": "main/step_2.png",
+      "prev": "step1",
+      "next": "result",
+      "fields": [
+        { "key": "question", "type": "textarea", "maxLength": 200, "optional": true }
+      ]
+    }
+  ],
+
+  "resultPage": {
+    "sections": [
+      { "type": "webtoon-panel", "image": "result/result_0.png", "scriptKey": "result.opening" },
+      { "type": "webtoon-panel", "image": "result/result_1.png" },
+      { "type": "webtoon-panel", "image": "result/result_2.png", "scriptKey": "result.saju_intro" },
+
+      { "type": "saju-table" },
+      { "type": "daeun-table" },
+      { "type": "ohaeng" },
+
+      { "type": "webtoon-panel", "image": "result/result_3.png", "scriptKey": "result.secret" },
+
+      { "type": "speech-bubble", "scriptKey": "result.destiny_intro" },
+      { "type": "destiny-partner", "imageKey": "dreamPerson" },
+      { "type": "spacer" },
+      { "type": "speech-bubble", "scriptKey": "result.wealth_intro" },
+      { "type": "wealth-graph", "imageKey": "wealthGraph" },
+
+      { "type": "webtoon-panel", "image": "result/result_4.png" },
+      { "type": "crisis-list" },
+
+      { "type": "webtoon-panel", "image": "result/result_5.png", "scriptKey": "result.closing" },
+      { "type": "webtoon-panel", "image": "result/result_6.png", "scriptKey": "result.cta_message" },
+      {
+        "type": "payment-gate",
+        "image": "result/result_7.png",
+        "aspectRatio": "750/3538",
+        "buttonPosition": { "top": "48.5%", "height": "3%", "px": "7.5%" }
+      },
+
+      {
+        "type": "image-sequence",
+        "images": [
+          "result/result_hyundai_1.png",
+          "result/result_hyundai_2.png",
+          "result/result_8.png",
+          "result/result_9.png",
+          "result/result_10_251024.png",
+          "result/result_11.png",
+          "result/result_12.png",
+          "result/result_13.png",
+          "result/result_14.png",
+          "result/result_15.png",
+          "result/result_16.png",
+          "result/result_17.png",
+          "result/result_18.png"
+        ]
+      }
+    ],
+
+    "paymentBar": {
+      "triggerAfter": "speech-bubble",
+      "countdown": { "h": 10, "m": 31, "s": 47 }
+    }
+  },
+
+  "decorations": {
+    "leftCloud": "decorations/border_left_cloud_decoration.png",
+    "rightCloud": "decorations/border_right_cloud_decoration.png",
+    "fiveCircle": "components/saju/fivecircle/five-circle.png",
+    "fiveCircleLegend": "components/saju/fivecircle/five-circle-legend.png",
+    "strengthDiagram": "components/saju/fivecircle/details/strength-diagram.png"
+  },
+
+  "timeOptions": [
+    { "value": "", "label": "태어난 시간을 선택해주세요.", "disabled": true },
+    { "value": "unknown", "label": "시간 모름" },
+    { "value": "joja", "label": "조자/朝子 (00:00~01:29)" },
+    { "value": "chuk", "label": "축/丑 (01:30~03:29)" },
+    { "value": "in", "label": "인/寅 (03:30~05:29)" },
+    { "value": "myo", "label": "묘/卯 (05:30~07:29)" },
+    { "value": "jin", "label": "진/辰 (07:30~09:29)" },
+    { "value": "sa", "label": "사/巳 (09:30~11:29)" },
+    { "value": "oh", "label": "오/午 (11:30~13:29)" },
+    { "value": "mi", "label": "미/未 (13:30~15:29)" },
+    { "value": "shin", "label": "신/申 (15:30~17:29)" },
+    { "value": "yu", "label": "유/酉 (17:30~19:29)" },
+    { "value": "sul", "label": "술/戌 (19:30~21:29)" },
+    { "value": "hae", "label": "해/亥 (21:30~23:29)" },
+    { "value": "yaja", "label": "야자/夜子 (23:30~23:59)" }
+  ]
+}

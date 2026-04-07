@@ -4,7 +4,8 @@ export interface CarouselSlide {
   slug: string;
   href: string;
   alt: string;
-  banner: string;       // CDN 상대경로 (단일 배너)
+  serviceId?: string;   // 서비스 ID → thumbnails에서 배너/뱃지 자동 해석
+  banner: string;       // CDN 상대경로 (단일 배너) — serviceId 없으면 직접 사용
   rankBadge: string;    // 순위 뱃지
 }
 
@@ -13,6 +14,7 @@ export const carouselSlides: CarouselSlide[] = [
     slug: "redlove",
     href: "/s/redlove",
     alt: "홍연아씨 연애비책",
+    serviceId: "redlove",
     banner: "main/home_carousel/banner/redlove.png",
     rankBadge: "main/home_carousel/rank_badge/1.png?v=2",
   },
@@ -20,6 +22,7 @@ export const carouselSlides: CarouselSlide[] = [
     slug: "bluemoonladysaju",
     href: "/s/bluemoonladysaju",
     alt: "청월아씨 정통사주",
+    serviceId: "bluemoonladysaju",
     banner: "main/home_carousel/banner/bluemoonladysaju.png?v=2",
     rankBadge: "main/home_carousel/rank_badge/2.png?v=2",
   },
@@ -27,6 +30,7 @@ export const carouselSlides: CarouselSlide[] = [
     slug: "moongirl-2026",
     href: "/s/newyearmoongirl/2026",
     alt: "월하소녀 신년운세",
+    serviceId: "newyearmoongirl",
     banner: "main/home_carousel/banner/moongirl-2026.png",
     rankBadge: "main/home_carousel/rank_badge/3.png?v=2",
   },
@@ -34,6 +38,7 @@ export const carouselSlides: CarouselSlide[] = [
     slug: "adultlove",
     href: "/b/adultlove",
     alt: "은휘의 29금 절정비책",
+    serviceId: "adultlove",
     banner: "main/home_carousel/banner/adultlove.png",
     rankBadge: "main/home_carousel/rank_badge/4.png?v=2",
   },
@@ -41,6 +46,7 @@ export const carouselSlides: CarouselSlide[] = [
     slug: "redlotuslady",
     href: "/s/redlotuslady",
     alt: "홍연아씨 사주궁합",
+    serviceId: "redlotuslady",
     banner: "main/home_carousel/banner/redlotuslady.png",
     rankBadge: "main/home_carousel/rank_badge/5.png?v=2",
   },
@@ -52,6 +58,7 @@ export interface RecommendCard {
   title: string;
   href: string;
   img: string;
+  serviceId?: string;   // 서비스 ID → thumbnails.card 자동 해석
 }
 
 export const recommendCards: RecommendCard[] = [
@@ -70,6 +77,7 @@ export interface CategoryCard {
   desc: string;
   href: string;
   img: string;
+  serviceId?: string;   // 서비스 ID → thumbnails.card 자동 해석
 }
 
 export interface CategorySection {

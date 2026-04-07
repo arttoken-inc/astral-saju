@@ -35,11 +35,10 @@ export default function HeroCarousel({ slides }: HeroCarouselProps) {
           autoplay={{ delay: 3000, disableOnInteraction: false, pauseOnMouseEnter: false }}
           speed={500}
           loop
-          loopAdditionalSlides={2}
           slidesPerView={1}
           spaceBetween={0}
           onSwiper={setSwiperRef}
-          onSlideChange={handleSlideChange}
+          onRealIndexChange={handleSlideChange}
           className="hero-carousel w-full overflow-hidden rounded-2xl"
         >
           {slides.map((slide, i) => (

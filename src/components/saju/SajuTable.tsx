@@ -1,4 +1,5 @@
-import type { SajuData, Decorations } from "@/lib/serviceConfig";
+import type { SajuDisplayData } from "@/lib/sajuDisplayTypes";
+import type { Decorations } from "@/lib/serviceConfig";
 import SajuCard from "./SajuCard";
 import { cdnUrl } from "@/lib/cdn";
 
@@ -7,11 +8,21 @@ function kanjiImg(char: string) {
 }
 
 interface SajuTableProps {
-  data: SajuData;
+  data: SajuDisplayData | null;
   decorations: Decorations;
 }
 
 export default function SajuTable({ data: d, decorations }: SajuTableProps) {
+  if (!d) {
+    return (
+      <SajuCard decorations={decorations}>
+        <div className="px-6 py-10 text-center font-pretendard text-sm text-gray-400">
+          사주 분석 후 사주표가 표시됩니다
+        </div>
+      </SajuCard>
+    );
+  }
+
   const cols = ["時", "日", "月", "年"];
 
   return (

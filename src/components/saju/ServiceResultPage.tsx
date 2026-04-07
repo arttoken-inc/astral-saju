@@ -1,14 +1,68 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
-import type { ServiceConfig, ResultSection } from "@/lib/serviceConfig";
+import type {
+  LoadedServiceConfig,
+  ResultSection,
+  ServiceScript,
+  TextOverlay,
+} from "@/lib/serviceConfig";
+import type {
+  SajuDisplayData,
+  OhaengDisplayData,
+  DaeunDisplayData,
+} from "@/lib/sajuDisplayTypes";
+import { resolveServiceImagePath } from "@/lib/configLoader";
 import { replaceTemplate } from "@/lib/templateReplace";
 import { cdnUrl } from "@/lib/cdn";
 import SajuTable from "./SajuTable";
 import DaeunTable from "./DaeunTable";
 import OhaengSection from "./OhaengSection";
-import SajuCard from "./SajuCard";
+
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+
+interface SajuAnalysisResult {
+  sajuDisplay: SajuDisplayData;
+  ohaengDisplay: OhaengDisplayData;
+  daeunDisplay: DaeunDisplayData;
+  resolvedImages: Record<string, string>;
+  crisisList: string[];
+}
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+function img(serviceId: string, path: string): string {
+  return cdnUrl(resolveServiceImagePath(serviceId, path));
+}
+
+function resolveScript(
+  script: ServiceScript,
+  scriptKey: string | undefined,
+): TextOverlay[] | string | undefined {
+  if (!scriptKey) return undefined;
+  const parts = scriptKey.split(".");
+  let cur: unknown = script;
+  for (const p of parts) {
+    if (cur && typeof cur === "object") {
+      cur = (cur as Record<string, unknown>)[p];
+    } else {
+      return undefined;
+    }
+  }
+  return cur as TextOverlay[] | string | undefined;
+}
+
+const TEXT_CLASS =
+  "absolute whitespace-nowrap text-center text-base min-[354px]:text-lg min-[396px]:text-xl min-[438px]:text-[1.375rem] min-[438px]:leading-[1.5] font-gapyeong text-[#111111]";
+
+// ---------------------------------------------------------------------------
+// Result Header
+// ---------------------------------------------------------------------------
 
 function ResultHeader() {
   return (
@@ -28,91 +82,124 @@ function ResultHeader() {
   );
 }
 
-const TEXT_CLASS = "absolute whitespace-nowrap text-center text-base min-[354px]:text-lg min-[396px]:text-xl min-[438px]:text-[1.375rem] min-[438px]:leading-[1.5] font-gapyeong text-[#111111]";
-
 function CardWrapper({ children }: { children: React.ReactNode }) {
   return <div className="w-full px-3">{children}</div>;
 }
 
-function SectionRenderer({ section, config, vars }: { section: ResultSection; config: ServiceConfig; vars: Record<string, string> }) {
+// ---------------------------------------------------------------------------
+// Loading Skeleton
+// ---------------------------------------------------------------------------
+
+function LoadingSkeleton() {
+  return (
+    <div className="flex flex-col items-center justify-center py-20">
+      <div className="h-10 w-10 animate-spin rounded-full border-4 border-gray-200 border-t-[#04336D]" />
+      <p className="mt-4 font-pretendard text-sm text-gray-500">사주를 분석하고 있습니다...</p>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Section Renderer
+// ---------------------------------------------------------------------------
+
+function SectionRenderer({
+  section,
+  config,
+  vars,
+  analysis,
+}: {
+  section: ResultSection;
+  config: LoadedServiceConfig;
+  vars: Record<string, string>;
+  analysis: SajuAnalysisResult | null;
+}) {
+  const { service, script } = config;
+  const serviceId = service.meta.serviceId;
   const t = (text: string) => replaceTemplate(text, vars);
+  const decs = service.decorations;
 
   switch (section.type) {
-    case "image":
+    case "webtoon-panel": {
+      const scriptData = resolveScript(script, section.scriptKey);
+      const overlays = Array.isArray(scriptData) ? scriptData : undefined;
       return (
         <div className={section.className || "relative"}>
-          <img className="w-full" alt="" src={cdnUrl(section.image)} loading="lazy" />
-        </div>
-      );
-
-    case "image-with-text":
-      return (
-        <div className={section.className || "relative"}>
-          <img className="w-full" alt="" src={cdnUrl(section.image)} loading="lazy" />
-          {section.texts.map((txt, i) => (
-            <p key={i} className={TEXT_CLASS} style={txt.style as React.CSSProperties}>
-              {t(txt.content).split("\n").map((line, j) => (
+          {section.image && (
+            <img className="w-full" alt="" src={img(serviceId, section.image)} loading="lazy" />
+          )}
+          {overlays?.map((overlay, i) => (
+            <p key={i} className={TEXT_CLASS} style={overlay.position as React.CSSProperties}>
+              {t(overlay.text).split("\n").map((line, j) => (
                 <span key={j}>{j > 0 && <br />}{line}</span>
               ))}
             </p>
           ))}
         </div>
       );
+    }
 
-    case "image-pair":
+    case "image-sequence":
       return (
         <div className={section.className}>
-          {section.images.map((img, i) => (
-            <img key={i} className="w-full" alt="" src={cdnUrl(img)} loading="lazy" />
+          {section.images.map((imgPath, i) => (
+            <img key={i} className="w-full" alt="" src={img(serviceId, imgPath)} loading="lazy" />
           ))}
         </div>
       );
 
     case "saju-table":
       return (
-        <div className={section.className}>
-          <img alt="" src={cdnUrl(section.bubbleImage)} className="mx-auto mb-4" style={{ width: section.bubbleWidth }} loading="lazy" />
-          <CardWrapper>
-            <SajuTable data={config.sampleData} decorations={config.decorations} />
-          </CardWrapper>
+        <div className={section.className || "relative mt-36"}>
+          {!analysis ? <LoadingSkeleton /> : (
+            <CardWrapper>
+              <SajuTable data={analysis.sajuDisplay} decorations={decs} />
+            </CardWrapper>
+          )}
         </div>
       );
 
     case "daeun-table":
       return (
-        <div className={section.className}>
-          <img alt="" src={cdnUrl(section.bubbleImages[0])} className="mx-auto mb-4" style={{ width: section.bubbleWidths[0] }} loading="lazy" />
-          <CardWrapper>
-            <DaeunTable data={config.sampleData} daeun={config.daeunData} decorations={config.decorations} />
-          </CardWrapper>
-          {section.bubbleImages[1] && (
-            <img alt="" src={cdnUrl(section.bubbleImages[1])} className="mx-auto mt-4" style={{ width: section.bubbleWidths[1] }} loading="lazy" />
+        <div className={section.className || "relative mt-40"}>
+          {!analysis ? <LoadingSkeleton /> : (
+            <CardWrapper>
+              <DaeunTable data={analysis.sajuDisplay} daeun={analysis.daeunDisplay} decorations={decs} />
+            </CardWrapper>
           )}
         </div>
       );
 
     case "ohaeng":
       return (
-        <div className={section.className}>
-          <img alt="" src={cdnUrl(section.bubbleImage)} className="mx-auto mb-4" style={{ width: section.bubbleWidth }} loading="lazy" />
-          <CardWrapper>
-            <OhaengSection data={config.sampleData} ohaeng={config.ohaengData} decorations={config.decorations} />
-          </CardWrapper>
+        <div className={section.className || "relative mb-10 mt-80"}>
+          {!analysis ? <LoadingSkeleton /> : (
+            <CardWrapper>
+              <OhaengSection data={analysis.sajuDisplay} ohaeng={analysis.ohaengDisplay} decorations={decs} />
+            </CardWrapper>
+          )}
         </div>
       );
 
-    case "speech-bubble":
+    case "speech-bubble": {
+      const scriptData = resolveScript(script, section.scriptKey);
+      const text = typeof scriptData === "string" ? scriptData : "";
       return (
         <div className={`mx-auto mb-5 mt-10 w-fit border border-black bg-white px-4 py-3 text-center font-gapyeong text-base leading-[150%] shadow-md ${section.className || ""}`}>
-          {t(section.text).split("\n").map((line, i) => (
+          {t(text).split("\n").map((line, i) => (
             <span key={i}>{i > 0 && <br />}{line}</span>
           ))}
         </div>
       );
+    }
 
     case "destiny-partner": {
-      const dp = config.destinyPartner;
-      const decs = config.decorations;
+      const title = t(script.titles.destiny_partner || "{name}님의 운명의 짝");
+      const resolvedImg = analysis?.resolvedImages?.dreamPerson;
+      const rule = service.dynamicImages.dreamPerson;
+      const dreamPersonImg = resolvedImg
+        ? cdnUrl(resolvedImg)
+        : rule?.fallback ? cdnUrl(rule.fallback) : "";
       return (
         <CardWrapper>
           <div className="relative h-full border-[3px] border-[#1B2F49] bg-[#F5F3EC] shadow-md">
@@ -121,34 +208,22 @@ function SectionRenderer({ section, config, vars }: { section: ResultSection; co
             <div className="absolute left-2 h-full w-[1px] bg-[#2B557E]" />
             <div className="absolute right-2 h-full w-[1px] bg-[#2B557E]" />
             <div className="absolute z-0 mt-6 flex w-full justify-between px-2">
-              <img alt="" className="mt-5 h-[2.375rem] w-[3.5rem]" src={decs.leftCloud} loading="lazy" />
-              <img alt="" className="mb-5 h-[2.375rem] w-[3.5rem]" src={decs.rightCloud} loading="lazy" />
+              <img alt="" className="mt-5 h-[2.375rem] w-[3.5rem]" src={cdnUrl(decs.leftCloud)} loading="lazy" />
+              <img alt="" className="mb-5 h-[2.375rem] w-[3.5rem]" src={cdnUrl(decs.rightCloud)} loading="lazy" />
             </div>
             <div className="relative" style={{ zIndex: 1 }}>
               <div className="px-5 py-10">
-                <h3 className="text-center font-gapyeong text-xl font-bold leading-none">{t(section.title)}</h3>
+                <h3 className="text-center font-gapyeong text-xl font-bold leading-none">{title}</h3>
                 <div className="mx-2 mb-10 mt-10 overflow-hidden rounded-3xl border-4 border-[#BDCEED]">
                   <div className="relative w-full" style={{ aspectRatio: "295 / 446" }}>
-                    <img className="h-full w-full object-cover" alt="" src={cdnUrl(decs.dreamPerson)} loading="lazy" />
+                    <img className="h-full w-full object-cover" alt="" src={dreamPersonImg} loading="lazy" />
                   </div>
                 </div>
                 <div className="w-full border-b border-[#A1A1A1]" />
                 <div className="mt-10 space-y-6 px-4">
-                  {[
-                    { label: "직업", tags: [dp.job] },
-                    { label: "외모", tags: dp.appearance },
-                    { label: "성격", tags: dp.personality },
-                    { label: "특징", tags: dp.traits },
-                  ].map((sec) => (
-                    <div key={sec.label} className="space-y-3">
-                      <div className="font-pretendard text-base font-semibold leading-none">{sec.label}</div>
-                      <div className="flex flex-wrap items-center gap-2">
-                        {sec.tags.map((tag) => (
-                          <div key={tag} className="rounded-full border border-[#486493] bg-[#BDCEED]/20 px-3 py-2 font-pretendard text-sm font-semibold text-[#2B557E]">{tag}</div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
+                  <p className="text-center font-pretendard text-sm text-gray-400">
+                    {analysis ? "운명의 짝 상세 정보는 유료 분석에서 확인하세요" : "사주 분석 후 운명의 짝 정보가 표시됩니다"}
+                  </p>
                 </div>
               </div>
             </div>
@@ -157,26 +232,41 @@ function SectionRenderer({ section, config, vars }: { section: ResultSection; co
       );
     }
 
-    case "wealth-graph":
+    case "wealth-graph": {
+      const speechText = resolveScript(script, section.scriptKey ?? "result.wealth_intro");
+      const title = t(script.titles.wealth_graph || "{name}님의 시기별 재산");
+      const resolvedImg = analysis?.resolvedImages?.wealthGraph;
+      const rule = service.dynamicImages.wealthGraph;
+      const graphImg = resolvedImg
+        ? cdnUrl(resolvedImg)
+        : rule?.fallback ? cdnUrl(rule.fallback) : "";
       return (
-        <div className={section.className}>
-          <div className="mx-auto mb-5 mt-10 w-fit border border-black bg-white px-4 py-3 text-center font-gapyeong text-base leading-[150%] shadow-md">
-            {t(section.speechBubble).split("\n").map((line, i) => (
-              <span key={i}>{i > 0 && <br />}{line}</span>
-            ))}
-          </div>
-          <div className="text-center font-gapyeong text-base font-bold">{t(section.title)}</div>
-          <img alt="" className="mt-4 w-full" src={cdnUrl(config.decorations.maskedWealthGraph)} loading="lazy" />
+        <div className={section.className || "relative mb-10 mt-28 px-3"}>
+          {typeof speechText === "string" && (
+            <div className="mx-auto mb-5 mt-10 w-fit border border-black bg-white px-4 py-3 text-center font-gapyeong text-base leading-[150%] shadow-md">
+              {t(speechText).split("\n").map((line, i) => (
+                <span key={i}>{i > 0 && <br />}{line}</span>
+              ))}
+            </div>
+          )}
+          <div className="text-center font-gapyeong text-base font-bold">{title}</div>
+          <img alt="" className="mt-4 w-full" src={graphImg} loading="lazy" />
         </div>
       );
+    }
 
-    case "crisis-list":
+    case "crisis-list": {
+      const title = t(script.titles.crisis_list || "{name}님에게 찾아올 위기");
+      const items = analysis?.crisisList ?? [
+        "사주 분석 후 위기 정보가 표시됩니다",
+        "결제 후 전체 내용을 확인할 수 있습니다",
+      ];
       return (
-        <div className={section.className}>
+        <div className={section.className || "relative mx-6 p-2 shadow-md -mt-16 mb-12"}>
           <div className="border-2 border-[#A39481] py-8 pl-6 pr-4">
-            <h3 className="pr-2 text-center font-gapyeong text-xl font-bold leading-none text-[#111111]">{t(section.title)}</h3>
+            <h3 className="pr-2 text-center font-gapyeong text-xl font-bold leading-none text-[#111111]">{title}</h3>
             <ul className="mt-8 flex flex-col justify-center gap-5">
-              {config.crisisList.map((item, i) => (
+              {items.map((item, i) => (
                 <li key={i} className={`flex gap-2 font-pretendard font-normal ${i >= 3 ? "pointer-events-none select-none blur-sm" : ""}`}>
                   <span className="w-6 text-center font-bold text-[#2B557E]">{String(i + 1).padStart(2, "0")}.</span>
                   <span>{item}</span>
@@ -186,12 +276,13 @@ function SectionRenderer({ section, config, vars }: { section: ResultSection; co
           </div>
         </div>
       );
+    }
 
     case "payment-gate":
       return (
         <div className="relative">
           <div className="relative" style={{ aspectRatio: section.aspectRatio }}>
-            <img className="h-full w-full object-cover" alt="" src={cdnUrl(section.image)} loading="lazy" />
+            <img className="h-full w-full object-cover" alt="" src={img(serviceId, section.image)} loading="lazy" />
           </div>
           <div className="absolute inset-x-0 w-full -translate-y-1/2" style={{ top: section.buttonPosition.top, height: section.buttonPosition.height, paddingLeft: section.buttonPosition.px, paddingRight: section.buttonPosition.px }}>
             <button className="z-10 h-full w-full rounded-b-3xl bg-transparent" />
@@ -207,8 +298,22 @@ function SectionRenderer({ section, config, vars }: { section: ResultSection; co
   }
 }
 
-function StickyPaymentBar({ visible, buttonColor, buttonText }: { visible: boolean; buttonColor: string; buttonText: string }) {
-  const [time, setTime] = useState({ h: 10, m: 31, s: 47 });
+// ---------------------------------------------------------------------------
+// Sticky Payment Bar
+// ---------------------------------------------------------------------------
+
+function StickyPaymentBar({
+  visible,
+  buttonColor,
+  buttonText,
+  countdown,
+}: {
+  visible: boolean;
+  buttonColor: string;
+  buttonText: string;
+  countdown: { h: number; m: number; s: number };
+}) {
+  const [time, setTime] = useState(countdown);
 
   useEffect(() => {
     if (!visible) return;
@@ -250,50 +355,107 @@ function StickyPaymentBar({ visible, buttonColor, buttonText }: { visible: boole
   );
 }
 
-export default function ServiceResultPage({ config }: { config: ServiceConfig }) {
-  const vars = {
-    name: config.sampleData.nameShort,
-    characterName: config.meta.characterName,
-  };
+// ---------------------------------------------------------------------------
+// Main Component
+// ---------------------------------------------------------------------------
 
+export default function ServiceResultPage({ config }: { config: LoadedServiceConfig }) {
+  const { service, script } = config;
+  const serviceId = service.meta.serviceId;
+
+  const [analysis, setAnalysis] = useState<SajuAnalysisResult | null>(null);
+  const [userName, setUserName] = useState("회원");
   const [showPaymentBar, setShowPaymentBar] = useState(false);
   const triggerRef = useRef<HTMLDivElement>(null);
+  const fetchedRef = useRef(false);
 
+  // Load form data from sessionStorage and call API
+  const fetchAnalysis = useCallback(async () => {
+    if (fetchedRef.current) return;
+    fetchedRef.current = true;
+
+    try {
+      const stored = sessionStorage.getItem(`saju_form_${serviceId}`);
+      if (!stored) return;
+
+      const formData = JSON.parse(stored) as Record<string, string>;
+      const name = formData.name || "회원";
+      setUserName(name);
+
+      const res = await fetch("/api/saju/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          serviceId,
+          name,
+          birthdate: formData.birthdate,
+          birthtime: formData.birthtime,
+          gender: formData.gender,
+          calendarType: formData.calendarType || "solar",
+          dynamicImages: service.dynamicImages,
+        }),
+      });
+
+      if (res.ok) {
+        const data = (await res.json()) as SajuAnalysisResult;
+        setAnalysis(data);
+      }
+    } catch (e) {
+      console.error("Failed to fetch saju analysis:", e);
+    }
+  }, [serviceId, service.dynamicImages]);
+
+  useEffect(() => {
+    fetchAnalysis();
+  }, [fetchAnalysis]);
+
+  // Template vars
+  const nameShort = userName.length > 1 ? userName.slice(1) : userName;
+  const vars = {
+    name: nameShort,
+    character: script.character.name,
+    characterName: script.character.name,
+    serviceTitle: service.meta.serviceTitle,
+  };
+
+  // Payment bar trigger
   useEffect(() => {
     if (!triggerRef.current) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          setShowPaymentBar(true);
-        }
+        if (entry.isIntersecting) setShowPaymentBar(true);
       },
-      { threshold: 0.1 }
+      { threshold: 0.1 },
     );
     observer.observe(triggerRef.current);
     return () => observer.disconnect();
   }, []);
 
-  // 트리거 위치: speech-bubble 섹션 (운명의 짝 전에 나타나는 말풍선)
-  const triggerIndex = config.resultPage.sections.findIndex(
-    (s) => s.type === "speech-bubble"
+  const paymentBar = service.resultPage.paymentBar;
+  const triggerType = paymentBar.triggerAfter;
+  const triggerIndex = service.resultPage.sections.findIndex(
+    (s) => s.type === triggerType,
   );
+
+  const paymentButtonText = replaceTemplate(script.payment.button, vars);
 
   return (
     <>
       <ResultHeader />
       <main className="mx-auto max-w-md pt-[3.75rem]">
-        <div style={{ backgroundColor: config.colors.resultBg }}>
-          {config.resultPage.sections.map((section, i) => (
+        <div style={{ backgroundColor: service.theme.resultBg }}>
+          {service.resultPage.sections.map((section, i) => (
             <div key={i}>
               {i === triggerIndex && <div ref={triggerRef} />}
-              <SectionRenderer section={section} config={config} vars={vars} />
+              <SectionRenderer section={section} config={config} vars={vars} analysis={analysis} />
             </div>
           ))}
         </div>
         <StickyPaymentBar
           visible={showPaymentBar}
-          buttonColor={config.colors.cardAccent}
-          buttonText={`${config.meta.serviceTitle} 지금 받아보기`}
+          buttonColor={service.theme.cardAccent}
+          buttonText={paymentButtonText}
+          countdown={paymentBar.countdown}
         />
       </main>
     </>

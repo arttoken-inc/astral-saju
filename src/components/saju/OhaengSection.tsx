@@ -1,6 +1,8 @@
-import type { SajuData, OhaengData, Decorations } from "@/lib/serviceConfig";
+import type { SajuDisplayData, OhaengDisplayData } from "@/lib/sajuDisplayTypes";
+import type { Decorations } from "@/lib/serviceConfig";
 import SajuCard from "./SajuCard";
 import { cdnUrl } from "@/lib/cdn";
+import { useMemo } from "react";
 
 function yongsinImg(name: string) {
   return cdnUrl(`components/saju/fivecircle/details/${encodeURIComponent(name)}.png`);
@@ -18,14 +20,22 @@ function InfoButton() {
 }
 
 interface OhaengSectionProps {
-  data: SajuData;
-  ohaeng: OhaengData;
+  data: SajuDisplayData | null;
+  ohaeng: OhaengDisplayData | null;
   decorations: Decorations;
 }
 
-import { useMemo } from "react";
-
 export default function OhaengSection({ data, ohaeng: oh, decorations }: OhaengSectionProps) {
+  if (!data || !oh) {
+    return (
+      <SajuCard decorations={decorations}>
+        <div className="px-6 py-10 text-center font-pretendard text-sm text-gray-400">
+          사주 분석 후 오행 정보가 표시됩니다
+        </div>
+      </SajuCard>
+    );
+  }
+
   const maxRatio = useMemo(() => Math.max(...oh.ratio.map((r) => r.value)), [oh.ratio]);
 
   return (

@@ -1,0 +1,65 @@
+{
+  "character": {
+    "id": "cheongwol",
+    "name": "청월",
+    "displayName": "청월아씨"
+  },
+
+  "steps": {
+    "home":   { "cta": "내 사주팔자 바로 확인하기" },
+    "intro":  { "cta": "좋아, 내 이름은.." },
+    "info":   { "cta": "다 입력했어!" },
+    "middle": { "cta": "응, 어떤걸 알려줄까?" },
+    "step1":  { "cta": "다음으로", "header": "혹시 지금 만나는 분이 있으세요?\n연애 중이신지 궁금해요!" },
+    "step2":  { "cta": "결과 보러가기", "header": "고민이나 중요한 일이 있으신가요?\n제게 알려주시면, 정성껏 답변해 드릴게요." }
+  },
+
+  "fields": {
+    "name":       { "label": "나의 이름", "placeholder": "이름을 입력해 주세요." },
+    "birthdate":  { "label": "나의 생년월일", "placeholder": "0000.00.00", "calendarLabels": ["양력", "음력"] },
+    "birthtime":  { "label": "나의 태어난 시간", "unknownLabel": "시간모름" },
+    "gender":     { "label": "성별" },
+    "loveStatus": { "label": "현재 연애 중이신가요?", "placeholder": "연애 상태" },
+    "loveDuration": { "label": "만나온 기간이 얼마나 되셨나요?", "placeholder": "기간 선택" },
+    "question":   { "label": "청월아씨에게 궁금한 점을 물어보세요.", "placeholder": "정성껏 답변 해 드리오니, 꼼꼼하게 작성해 주세요" }
+  },
+
+  "result": {
+    "opening": [
+      { "text": "{name}님,\n만나서 반가워요,", "position": { "left": "29%", "top": "36.1%", "transform": "translateX(-50%) translateY(-50%)" } },
+      { "text": "지금부터 {name}님의\n사주를 풀어드릴\n{character}이라고 합니다.", "position": { "right": "34.4%", "top": "46.8%", "transform": "translateX(50%) translateY(-50%)" } },
+      { "text": "{name}님과 제가\n이렇게 인연이 닿아", "position": { "left": "39.5%", "bottom": "12.4%", "transform": "translateX(-50%) translateY(50%)" } },
+      { "text": "이야기를\n풀어드리게 되어\n정말 기쁘네요", "position": { "right": "31.3%", "bottom": "5.5%", "transform": "translateX(50%) translateY(50%)" } }
+    ],
+    "saju_intro": [
+      { "text": "먼저 제가\n{name}님의 사주를\n보기 쉽게 정리했어요", "position": { "right": "34.6%", "top": "16.8%", "transform": "translateX(50%) translateY(-50%)" } }
+    ],
+    "secret": [
+      { "text": "조금 비밀스러운\n이야기지만,", "position": { "right": "34.6%", "top": "28.9%", "transform": "translateX(50%) translateY(-50%)" } },
+      { "text": "{name}님의 사주에는\n이런 내용들이\n보이네요", "position": { "right": "34.5%", "bottom": "9.4%", "transform": "translateX(50%) translateY(50%)" } }
+    ],
+    "closing": [
+      { "text": "이 밖에도 {name}님께\n드릴 말씀이\n정말 많으니,", "position": { "right": "35.2%", "top": "12%", "transform": "translateX(50%) translateY(-50%)" } }
+    ],
+    "cta_message": [
+      { "text": "\"오직 {name}님 만을 위해\n준비된 이야기\"", "position": { "left": "50%", "top": "15.9%", "transform": "translateX(-50%) translateY(-50%)" } }
+    ],
+    "destiny_intro": "애정운에서는 {name}님이 앞으로 만나게 될\n운명의 짝이 보이고..",
+    "wealth_intro": "{name}님이 앞으로 얼마나 많은 재물을\n잃거나 얻게 될지도 보이고요,",
+    "saju_bubble": "사주표를 정리했어요",
+    "daeun_bubble_1": "대운의 흐름도 보이네요",
+    "daeun_bubble_2": "이 흐름이 중요해요",
+    "ohaeng_bubble": "오행의 균형을 살펴볼게요"
+  },
+
+  "titles": {
+    "destiny_partner": "{name}님의 운명의 짝",
+    "wealth_graph": "{name}님의 시기별 재산",
+    "crisis_list": "{name}님에게 찾아올 위기"
+  },
+
+  "payment": {
+    "discountLabel": "할인혜택 종료까지",
+    "button": "{serviceTitle} 지금 받아보기"
+  }
+}

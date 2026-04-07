@@ -3,7 +3,14 @@
 import { useState, useEffect, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
-import type { ServiceConfig, Step, FormField, FormStep } from "@/lib/serviceConfig";
+import type {
+  LoadedServiceConfig,
+  Step,
+  FormFieldDef,
+  FormStep,
+  ServiceScript,
+} from "@/lib/serviceConfig";
+import { resolveServiceImagePath } from "@/lib/configLoader";
 import StepLayout, { PrevButton, CTAButton } from "./StepLayout";
 import TextField from "./fields/TextField";
 import BirthdateField from "./fields/BirthdateField";
@@ -14,6 +21,11 @@ import TextareaField from "./fields/TextareaField";
 import { cdnUrl } from "@/lib/cdn";
 
 const TRANSITION_MS = 400;
+
+/** Resolve an image path from service.json (relative to serviceId) */
+function img(serviceId: string, path: string): string {
+  return cdnUrl(resolveServiceImagePath(serviceId, path));
+}
 
 function SajuHeader() {
   return (
@@ -38,15 +50,23 @@ function resolveStepId(stepParam: string | null): string {
   return stepParam.replace("step_", "");
 }
 
-function StepContent({ config }: { config: ServiceConfig }) {
+/** Get field label/placeholder from script.json, falling back to field key */
+function fieldLabel(script: ServiceScript, fieldKey: string, prop: "label" | "placeholder" | "unknownLabel" | "calendarLabels"): string | [string, string] | undefined {
+  const f = script.fields[fieldKey];
+  if (!f) return prop === "label" ? fieldKey : undefined;
+  return (f as unknown as Record<string, unknown>)[prop] as string | [string, string] | undefined;
+}
+
+function StepContent({ config }: { config: LoadedServiceConfig }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const stepParam = searchParams.get("step");
 
-  const baseUrl = `/s/${config.meta.serviceId}`;
-  const steps = config.steps;
+  const { service, script } = config;
+  const serviceId = service.meta.serviceId;
+  const baseUrl = `/s/${serviceId}`;
+  const steps = service.steps;
 
-  // Internal step state (not derived from URL)
   const [currentStepId, setCurrentStepId] = useState(() => resolveStepId(stepParam));
   const [opacity, setOpacity] = useState(1);
   const isTransitioning = useRef(false);
@@ -55,7 +75,6 @@ function StepContent({ config }: { config: ServiceConfig }) {
   const [calendarType, setCalendarType] = useState<"solar" | "lunar">("solar");
   const [unknownTime, setUnknownTime] = useState(false);
 
-  // Sync from URL on popstate (browser back/forward)
   useEffect(() => {
     const urlStepId = resolveStepId(stepParam);
     if (urlStepId !== currentStepId && !isTransitioning.current) {
@@ -69,31 +88,33 @@ function StepContent({ config }: { config: ServiceConfig }) {
 
   const currentStep = steps.find((s) => s.id === currentStepId) ?? steps[0];
 
+  // Get CTA text from script.json
+  const stepScript = script.steps[currentStep.id];
+  const ctaText = stepScript?.cta ?? "다음";
+
   const setField = (key: string, value: string) =>
     setFormData((prev) => ({ ...prev, [key]: value }));
 
   const goTo = (stepId: string | undefined) => {
     if (!stepId || isTransitioning.current) return;
     isTransitioning.current = true;
-
-    // 1) Fade out
     setOpacity(0);
-
-    // 2) After fade-out, switch step & update URL
     setTimeout(() => {
       if (stepId === "result") {
+        // Save form data to sessionStorage for the result page
+        try {
+          sessionStorage.setItem(
+            `saju_form_${serviceId}`,
+            JSON.stringify({ ...formData, calendarType }),
+          );
+        } catch { /* ignore */ }
         router.push(`${baseUrl}/result`);
         isTransitioning.current = false;
         return;
       }
-
       setCurrentStepId(stepId);
-
-      // Update URL without full navigation
       const newUrl = stepId === "home" ? baseUrl : `${baseUrl}?step=step_${stepId}`;
       window.history.pushState(null, "", newUrl);
-
-      // 3) Fade in
       requestAnimationFrame(() => {
         setOpacity(1);
         isTransitioning.current = false;
@@ -116,12 +137,12 @@ function StepContent({ config }: { config: ServiceConfig }) {
           <div className="absolute inset-0 h-full w-full">
             <div className="relative h-full w-full [&>video]:h-full [&>video]:object-cover [&>video]:object-top">
               {step.bgType === "video" ? (
-                <video className="w-full" muted loop autoPlay playsInline preload="metadata" poster={cdnUrl(step.bgPoster ?? "")}>
-                  <source src={cdnUrl(step.bgSrc)} type="video/mp4" />
-                  <img src={cdnUrl(step.bgPoster ?? "")} alt="배경" className="w-full" />
+                <video className="w-full" muted loop autoPlay playsInline preload="metadata" poster={img(serviceId, step.bgPoster ?? "")}>
+                  <source src={img(serviceId, step.bgSrc)} type="video/mp4" />
+                  <img src={img(serviceId, step.bgPoster ?? "")} alt="배경" className="w-full" />
                 </video>
               ) : (
-                <img src={cdnUrl(step.bgSrc)} alt="배경" className="absolute inset-0 h-full w-full object-cover" />
+                <img src={img(serviceId, step.bgSrc)} alt="배경" className="absolute inset-0 h-full w-full object-cover" />
               )}
             </div>
           </div>
@@ -136,7 +157,7 @@ function StepContent({ config }: { config: ServiceConfig }) {
                 {step.titleImage && (
                   <div className="absolute bottom-[120px] left-0 right-0 z-10 flex justify-center px-5">
                     <div className="relative w-full">
-                      <img src={cdnUrl(step.titleImage)} alt="Title" className="h-full w-full object-contain" />
+                      <img src={img(serviceId, step.titleImage)} alt="Title" className="h-full w-full object-contain" />
                     </div>
                   </div>
                 )}
@@ -146,7 +167,7 @@ function StepContent({ config }: { config: ServiceConfig }) {
           <div className="absolute bottom-0 left-0 right-0 z-30">
             <div className="absolute bottom-0 left-0 right-0 z-10 w-full px-5 pb-10">
               <div className="mx-auto flex w-full gap-3">
-                <CTAButton onClick={() => goTo(step.next)}>{step.cta}</CTAButton>
+                <CTAButton onClick={() => goTo(step.next)}>{ctaText}</CTAButton>
               </div>
             </div>
           </div>
@@ -161,13 +182,13 @@ function StepContent({ config }: { config: ServiceConfig }) {
     return (
       <StepLayout
         bgType="image"
-        bgSrc={cdnUrl(step.bgSrc)}
+        bgSrc={img(serviceId, step.bgSrc)}
         bottomGradient={step.bottomGradient}
         style={transitionStyle}
         buttons={
           <>
             {step.prev && <PrevButton onClick={() => goTo(step.prev)} />}
-            <CTAButton onClick={() => goTo(step.next)}>{step.cta}</CTAButton>
+            <CTAButton onClick={() => goTo(step.next)}>{ctaText}</CTAButton>
           </>
         }
       >
@@ -179,24 +200,25 @@ function StepContent({ config }: { config: ServiceConfig }) {
   // === FORM ===
   if (currentStep.type === "form") {
     const step = currentStep as FormStep;
+    const headerText = stepScript?.header;
     return (
       <StepLayout
         bgType="image"
-        bgSrc={cdnUrl(step.bgSrc)}
+        bgSrc={img(serviceId, step.bgSrc)}
         topGradient={step.topGradient}
         bottomGradient={step.bottomGradient}
         style={transitionStyle}
         stepIndicator={step.stepNumber ? { current: step.stepNumber, total: step.totalSteps } : undefined}
         headerContent={
-          step.header ? (
+          headerText ? (
             <div className="mt-5">
               <div className="relative flex items-center gap-3">
-                <h2 className="relative flex items-center gap-3 font-pretendard text-lg font-semibold leading-[1] tracking-[-0.45px] [text-shadow:rgba(0,0,0,0.35)_0px_0px_6px] before:absolute before:left-[-12px] before:block before:h-4 before:w-[2px] before:rounded-full before:content-['']" style={{ "--step-header-accent": config.colors.primary } as React.CSSProperties}>
-                  {step.header.character}
+                <h2 className="relative flex items-center gap-3 font-pretendard text-lg font-semibold leading-[1] tracking-[-0.45px] [text-shadow:rgba(0,0,0,0.35)_0px_0px_6px] before:absolute before:left-[-12px] before:block before:h-4 before:w-[2px] before:rounded-full before:content-['']" style={{ "--step-header-accent": service.theme.primary } as React.CSSProperties}>
+                  {script.character.name}
                 </h2>
               </div>
               <p className="mt-2 whitespace-pre-line font-pretendard text-base leading-[1.5] tracking-[-0.4px] [text-shadow:rgba(0,0,0,0.25)_0px_0px_4px]">
-                {step.header.question}
+                {headerText}
               </p>
             </div>
           ) : undefined
@@ -204,32 +226,38 @@ function StepContent({ config }: { config: ServiceConfig }) {
         buttons={
           <>
             {step.prev && <PrevButton onClick={() => goTo(step.prev)} />}
-            <CTAButton onClick={() => goTo(step.next)}>{step.cta}</CTAButton>
+            <CTAButton onClick={() => goTo(step.next)}>{ctaText}</CTAButton>
           </>
         }
       >
         <div className="relative z-[60] flex w-full flex-1 flex-col items-end justify-end">
           <div className="w-full space-y-8 px-1">
-            {step.fields.map((field: FormField) => {
-              // 조건부 표시
+            {step.fields.map((field: FormFieldDef) => {
               if (field.showWhen) {
                 const depValue = formData[field.showWhen.field];
-                if (field.showWhen.hasValue && !depValue) return null;
+                if (field.showWhen.values) {
+                  if (!depValue || !field.showWhen.values.includes(depValue)) return null;
+                } else if (field.showWhen.hasValue && !depValue) {
+                  return null;
+                }
               }
+
+              const label = fieldLabel(script, field.key, "label") as string;
+              const placeholder = fieldLabel(script, field.key, "placeholder") as string | undefined;
 
               switch (field.type) {
                 case "text":
-                  return <TextField key={field.key} label={field.label} placeholder={field.placeholder} maxLength={field.maxLength} value={formData[field.key] || ""} onChange={(v) => setField(field.key, v)} />;
+                  return <TextField key={field.key} label={label} placeholder={placeholder} maxLength={field.maxLength} value={formData[field.key] || ""} onChange={(v) => setField(field.key, v)} />;
                 case "birthdate":
-                  return <BirthdateField key={field.key} label={field.label} placeholder={field.placeholder} calendarLabels={field.calendarLabels} value={formData[field.key] || ""} onChange={(v) => setField(field.key, v)} calendarType={calendarType} onCalendarChange={setCalendarType} />;
+                  return <BirthdateField key={field.key} label={label} placeholder={placeholder} calendarLabels={fieldLabel(script, field.key, "calendarLabels") as [string, string] | undefined} value={formData[field.key] || ""} onChange={(v) => setField(field.key, v)} calendarType={calendarType} onCalendarChange={setCalendarType} />;
                 case "time-select":
-                  return <TimeSelectField key={field.key} label={field.label} unknownLabel={field.unknownLabel} options={config.timeOptions} value={formData[field.key] || ""} onChange={(v) => setField(field.key, v)} unknownTime={unknownTime} onUnknownChange={setUnknownTime} />;
+                  return <TimeSelectField key={field.key} label={label} unknownLabel={fieldLabel(script, field.key, "unknownLabel") as string | undefined} options={service.timeOptions} value={formData[field.key] || ""} onChange={(v) => setField(field.key, v)} unknownTime={unknownTime} onUnknownChange={setUnknownTime} />;
                 case "button-group":
-                  return <ButtonGroupField key={field.key} label={field.label} options={field.options || []} value={formData[field.key] || ""} onChange={(v) => setField(field.key, v)} primaryColor={config.colors.primary} />;
+                  return <ButtonGroupField key={field.key} label={label} options={field.options || []} value={formData[field.key] || ""} onChange={(v) => setField(field.key, v)} primaryColor={service.theme.primary} />;
                 case "select":
-                  return <SelectField key={field.key} label={field.label} optional={field.optional} placeholder={field.placeholder} options={field.options || []} value={formData[field.key] || ""} onChange={(v) => setField(field.key, v)} />;
+                  return <SelectField key={field.key} label={label} optional={field.optional} placeholder={placeholder} options={field.options || []} value={formData[field.key] || ""} onChange={(v) => setField(field.key, v)} />;
                 case "textarea":
-                  return <TextareaField key={field.key} label={field.label} optional={field.optional} placeholder={field.placeholder} maxLength={field.maxLength} value={formData[field.key] || ""} onChange={(v) => setField(field.key, v)} />;
+                  return <TextareaField key={field.key} label={label} optional={field.optional} placeholder={placeholder} maxLength={field.maxLength} value={formData[field.key] || ""} onChange={(v) => setField(field.key, v)} />;
                 default:
                   return null;
               }
@@ -243,7 +271,7 @@ function StepContent({ config }: { config: ServiceConfig }) {
   return null;
 }
 
-export default function ServiceStepPage({ config }: { config: ServiceConfig }) {
+export default function ServiceStepPage({ config }: { config: LoadedServiceConfig }) {
   return (
     <Suspense>
       <StepContent config={config} />
