@@ -353,17 +353,16 @@ export function toOhaengDisplayData(result: SajuResult): OhaengDisplayData {
   else if (myScore >= 25) level = "태약";
   else level = "극약";
 
-  // 용신/희신/기신 판별
-  const isStrong = myScore >= 50; // 중화 이상 (중화/신강/태강/극왕)
-  const yongshin = isStrong
-    ? getControllingElement(dayElement)
-    : getGeneratingElement(dayElement);
-  const heeshin = isStrong
-    ? getGeneratedElement(dayElement)
-    : dayElement;
-  const gishin = isStrong
-    ? getGeneratingElement(dayElement)
-    : getControllingElement(dayElement);
+  // 용신/희신/기신 판별 — 조후용신 우선, 억부용신 보조
+  const birthMonth = result.input.month;
+  const johuYongshin = getJohuYongshin(dayElement, birthMonth);
+  const yongshin = johuYongshin ?? (
+    myScore >= 40
+      ? getControllingElement(dayElement)
+      : getGeneratingElement(dayElement)
+  );
+  const heeshin = getGeneratingElement(yongshin); // 용신을 생하는 오행
+  const gishin = getControllingElement(yongshin); // 용신을 극하는 오행
 
   return {
     distribution,
@@ -372,7 +371,31 @@ export function toOhaengDisplayData(result: SajuResult): OhaengDisplayData {
     heeshin: { name: ELEMENT_KR[heeshin], img: ELEMENT_KR[heeshin] },
     gishin: { name: ELEMENT_KR[gishin], img: ELEMENT_KR[gishin] },
     strength: { ilgan: ilganHangul, level },
+    myElementIndex: ELEMENT_ORDER.indexOf(dayElement),
   };
+}
+
+/**
+ * 조후용신 테이블
+ * 일간 오행 + 출생 월(양력) → 용신 오행
+ * 계절의 한열조습을 보완하는 전통 사주명리학 기반
+ */
+function getJohuYongshin(dayElement: Element, month: number): Element | null {
+  // 계절: 봄(2-4), 여름(5-7), 가을(8-10), 겨울(11-1)
+  const table: Record<Element, Record<string, Element>> = {
+    wood: { spring: "fire", summer: "water", autumn: "fire", winter: "fire" },
+    fire: { spring: "wood", summer: "water", autumn: "wood", winter: "wood" },
+    earth: { spring: "fire", summer: "metal", autumn: "fire", winter: "fire" },
+    metal: { spring: "fire", summer: "water", autumn: "water", winter: "fire" },
+    water: { spring: "fire", summer: "metal", autumn: "metal", winter: "fire" },
+  };
+  let season: string;
+  if (month >= 2 && month <= 4) season = "spring";
+  else if (month >= 5 && month <= 7) season = "summer";
+  else if (month >= 8 && month <= 10) season = "autumn";
+  else season = "winter";
+
+  return table[dayElement]?.[season] ?? null;
 }
 
 // 오행 상생 관계

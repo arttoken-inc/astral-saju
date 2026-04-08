@@ -22,7 +22,7 @@ export default function DaeunTable({ data, daeun: d, decorations }: DaeunTablePr
   return (
     <SajuCard decorations={decorations}>
       <div className="px-6 py-10">
-        <h3 className="text-center font-gapyeong text-xl font-bold leading-none text-[#111111]">
+        <h3 className="text-center font-gapyeong text-lg font-bold leading-none text-[#111111]">
           {data.name}님의 대운표
         </h3>
         <p className="mt-2 text-center font-pretendard text-xs">

@@ -647,8 +647,8 @@ export function getDaewoon(
   // 월주의 60갑자 인덱스
   const monthGanziIdx = GANZI_60.indexOf(monthGanzi);
 
-  // 대운 시작 나이 계산
-  const startAge = calculateDaewoonStartAge(year, month, day, isForward);
+  // 대운 시작 나이 계산 (한국식 세는나이 +1)
+  const startAge = calculateDaewoonStartAge(year, month, day, isForward) + 1;
 
   const result: DaewoonItem[] = [];
   const dayStemHanja = dayGanzi[0];

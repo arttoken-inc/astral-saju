@@ -38,6 +38,8 @@ export interface OhaengDisplayData {
   heeshin: { name: string; img: string };
   gishin: { name: string; img: string };
   strength: { ilgan: string; level: string };
+  /** 일간 오행의 ratio 배열 내 인덱스 (0=목,1=화,2=토,3=금,4=수) */
+  myElementIndex: number;
 }
 
 export interface DaeunDisplayData {
