@@ -2,6 +2,7 @@
 
 import { cdnUrl } from "@/lib/cdn";
 import type { CategorySection } from "@/data/landing";
+import HScrollRow from "./HScrollRow";
 
 function CategoryRow({ section }: { section: CategorySection }) {
   const showViewAll = section.heading.includes("뭘 좋아하실지");
@@ -23,7 +24,7 @@ function CategoryRow({ section }: { section: CategorySection }) {
           </a>
         )}
       </div>
-      <div className="scrollbar-hide flex gap-3 overflow-x-auto px-5">
+      <HScrollRow className="gap-3 px-5">
         {section.cards.map((card) => (
           <a
             key={card.href + card.title}
@@ -44,7 +45,7 @@ function CategoryRow({ section }: { section: CategorySection }) {
             </p>
           </a>
         ))}
-      </div>
+      </HScrollRow>
     </div>
   );
 }

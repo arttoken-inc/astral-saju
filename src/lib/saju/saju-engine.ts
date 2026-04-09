@@ -12,6 +12,8 @@ import {
   HEAVENLY_STEMS_HANJA,
   EARTHLY_BRANCHES,
   EARTHLY_BRANCHES_HANJA,
+  calculateFourPillars as manseryeokFourPillars,
+  type BirthInfo as ManseryeokBirthInfo,
 } from 'manseryeok';
 
 // ──────────────────────────────────────────────
@@ -634,9 +636,13 @@ export function getTwelveSpirit(yearBranch: string, targetBranch: string): strin
  * 3. 대운 시작 나이 = 생일에서 다음(순행)/이전(역행) 절기까지 일수 ÷ 3 (내림)
  */
 export function getDaewoon(
-  isMale: boolean, year: number, month: number, day: number, hour: number, minute: number
+  isMale: boolean, year: number, month: number, day: number, hour: number, minute: number,
+  isLunar?: boolean,
 ): DaewoonItem[] {
-  const [yearGanzi, monthGanzi, dayGanzi] = getFourPillars(year, month, day, hour, minute);
+  const fpResult = manseryeokFourPillars({ year, month, day, hour, minute, isLunar });
+  const yearGanzi = fpResult.yearHanja;
+  const monthGanzi = fpResult.monthHanja;
+  const dayGanzi = fpResult.dayHanja;
 
   // 년간의 음양으로 순행/역행 결정
   const yearStemIdx = stemIndex(yearGanzi[0]);
@@ -893,8 +899,16 @@ export function calculateSaju(input: BirthInput): SajuResult {
   const { year, month, day, hour, minute, gender } = input;
   const isMale = gender === 'male' || gender === 'M';
 
-  // 1. 기본 사주 계산 (절기 기반 직접 계산)
-  const [yearGanzi, monthGanzi, dayGanzi, hourGanzi] = getFourPillars(year, month, day, hour, minute);
+  // 1. 사주 계산 — manseryeok 패키지 사용 (정확한 절기 기반)
+  const manseryeokInput: ManseryeokBirthInfo = {
+    year, month, day, hour, minute,
+    isLunar: input.isLunar,
+  };
+  const fpResult = manseryeokFourPillars(manseryeokInput);
+  const yearGanzi = fpResult.yearHanja;   // e.g. "丁卯"
+  const monthGanzi = fpResult.monthHanja;
+  const dayGanzi = fpResult.dayHanja;
+  const hourGanzi = fpResult.hourHanja;
 
   // 간지 문자열 배열 [시주, 일주, 월주, 연주] — 테스트 호환 순서
   const ganziArr = [hourGanzi, dayGanzi, monthGanzi, yearGanzi];
@@ -947,7 +961,7 @@ export function calculateSaju(input: BirthInput): SajuResult {
   });
 
   // 3. 대운 계산
-  const daewoon = getDaewoon(isMale, year, month, day, hour, minute);
+  const daewoon = getDaewoon(isMale, year, month, day, hour, minute, input.isLunar);
 
   // 4. 합충형파해 관계 분석
   const relations = analyzeRelations(ganziArr);

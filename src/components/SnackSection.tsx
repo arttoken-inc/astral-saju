@@ -2,6 +2,7 @@
 
 import { cdnUrl } from "@/lib/cdn";
 import type { SnackCard } from "@/data/landing";
+import HScrollRow from "./HScrollRow";
 
 export default function SnackSection({ cards }: { cards: SnackCard[] }) {
   return (
@@ -20,7 +21,7 @@ export default function SnackSection({ cards }: { cards: SnackCard[] }) {
           </svg>
         </a>
       </div>
-      <div className="scrollbar-hide grid auto-cols-[288px] grid-flow-col grid-rows-3 gap-3 overflow-x-auto pr-5">
+      <HScrollRow className="grid auto-cols-[288px] grid-flow-col grid-rows-3 gap-3 pr-5">
         {cards.map((card, i) => (
           <article key={card.href} className="h-16">
             <a className="flex h-full items-center" href={card.href}>
@@ -44,7 +45,7 @@ export default function SnackSection({ cards }: { cards: SnackCard[] }) {
             </a>
           </article>
         ))}
-      </div>
+      </HScrollRow>
     </section>
   );
 }

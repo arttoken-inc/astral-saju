@@ -3,6 +3,7 @@ import { auth, signOut } from "@/auth";
 import Link from "next/link";
 import Image from "next/image";
 import { cdnUrl } from "@/lib/cdn";
+import ProfileCard from "./ProfileCard";
 
 export const metadata: Metadata = {
   title: "마이 페이지 | 청월당 사주",
@@ -40,55 +41,7 @@ export default async function MyPage() {
             내 프로필
           </h3>
 
-          {/* 힌트 박스 */}
-          <div className="mt-4 rounded-[0.25rem] bg-[#F1F1F1] px-3 py-2">
-            <span className="font-pretendard text-xs font-bold text-[#2D4A71]">
-              💡 태어난 시를 입력하고 더 정확한 결과를 받아보세요!
-            </span>
-          </div>
-
-          {/* 프로필 카드 */}
-          <div className="mt-4 rounded-2xl border border-[#E1E1E1] p-6">
-            <div className="flex items-center gap-4">
-              {/* 프로필 이미지 */}
-              <div className="h-[6.25rem] w-[6.25rem] shrink-0 overflow-hidden rounded-full border border-[#E1E1E1]">
-                {user?.image ? (
-                  <img src={user.image} alt="프로필" className="h-full w-full object-cover" />
-                ) : (
-                  <img
-                    src={cdnUrl("profile/MALE_을목_신강.png")}
-                    alt="프로필"
-                    className="h-full w-full object-cover"
-                  />
-                )}
-              </div>
-
-              {/* 프로필 정보 */}
-              <div className="min-w-0">
-                <div className="flex items-center gap-2">
-                  <span className="font-pretendard text-2xl font-bold text-[#424242]">
-                    {user?.name || "사용자"}
-                  </span>
-                  <span className="rounded-lg bg-[#F0F8FF] px-2 py-1.5 font-pretendard text-xs font-bold text-[#424242]">
-                    # 을목 신강
-                  </span>
-                </div>
-                <div className="mt-1 flex items-center gap-2 font-pretendard text-sm font-normal text-[#424242]">
-                  <span>1987.02.05 [양력]</span>
-                  <span className="border-r border-[#A1A1A1]" />
-                  <span>남성</span>
-                </div>
-                <div className="mt-0.5 font-pretendard text-sm text-[#A1A1A1]">
-                  시간모름
-                </div>
-              </div>
-            </div>
-
-            {/* 프로필 편집 버튼 */}
-            <button className="mt-6 h-12 w-full rounded-[0.625rem] bg-[#F1F1F1] font-pretendard text-base font-normal text-[#424242]">
-              프로필 편집
-            </button>
-          </div>
+          <ProfileCard userName={user?.name} />
         </section>
 
         {/* 나의 친구 */}

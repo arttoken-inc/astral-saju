@@ -15,6 +15,36 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
+      <head>
+        <link
+          rel="preload"
+          href="/fonts/GapyeongHanseokbong/GapyeongHanseokbongR.hangul-core.woff2?v=3"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preload"
+          href="/fonts/GapyeongHanseokbong/GapyeongHanseokbongR.hangul-common.woff2?v=3"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preload"
+          href="/fonts/GapyeongHanseokbong/GapyeongHanseokbongB.hangul-core.woff2?v=3"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preload"
+          href="/fonts/GapyeongHanseokbong/GapyeongHanseokbongB.hangul-common.woff2?v=3"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+      </head>
       <body className="antialiased">{children}</body>
     </html>
   );

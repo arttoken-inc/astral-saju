@@ -102,96 +102,42 @@ const BRANCH_MAIN_ELEMENT: Record<string, Element> = {
   "申": "metal", "酉": "metal", "戌": "earth", "亥": "water",
 };
 
-/** 사고지 방합: [방합 오행, 사왕 지지] */
-const SAGOJI_BANGHAP: Record<string, [Element, string]> = {
-  "丑": ["water", "子"], "辰": ["wood", "卯"],
-  "未": ["fire", "午"], "戌": ["metal", "酉"],
-};
-
-/** 음사고지 월지 → 계절 오행 */
-const SEASONAL_SAGOJI_ELEMENT: Record<string, Element> = {
-  "丑": "water", // 겨울→봄 전환기, 수 잔여
-  "未": "fire",  // 여름→가을 전환기, 화 잔여
-};
-
-/** 절기 기준일 (양력): 월지 → [양력월, 양력일] */
-const JEOLGI_DATES: Record<string, [number, number]> = {
-  "寅": [2, 4], "卯": [3, 6], "辰": [4, 5], "巳": [5, 6],
-  "午": [6, 6], "未": [7, 7], "申": [8, 7], "酉": [9, 8],
-  "戌": [10, 8], "亥": [11, 7], "子": [12, 7], "丑": [1, 6],
-};
-
 /**
- * 양사고지(辰/戌) 월지 5-phase 배분 (30점)
- * 이전계절 → 토(정기) → 다음계절 순으로 전환
- */
-const SAGOJI_PHASE_DIST: Record<string, Partial<Record<Element, number>>[]> = {
-  "辰": [ // 이전=wood(春), 정기=earth, 다음=fire(夏)
-    { wood: 20, earth: 10 },
-    { wood: 15, earth: 15 },
-    { wood: 10, fire: 10, earth: 10 },
-    { fire: 15, earth: 15 },
-    { fire: 20, earth: 10 },
-  ],
-  "戌": [ // 이전=metal(秋), 정기=earth, 다음=water(冬)
-    { metal: 20, earth: 10 },
-    { metal: 15, earth: 15 },
-    { metal: 10, water: 10, earth: 10 },
-    { water: 15, earth: 15 },
-    { water: 20, earth: 10 },
-  ],
-};
-
-/**
- * 양생지(寅/申) 월지 5-phase 배분 (30점)
- * 이전계절 → 정기 순으로 전환 (2원소)
- */
-const YANGSAENG_PHASE_DIST: Record<string, Partial<Record<Element, number>>[]> = {
-  "寅": [ // 이전=water(冬), 정기=wood(春)
-    { water: 30 },
-    { water: 20, wood: 10 },
-    { water: 15, wood: 15 },
-    { water: 10, wood: 20 },
-    { wood: 30 },
-  ],
-  "申": [ // 이전=fire(夏), 정기=metal(秋)
-    { fire: 30 },
-    { fire: 20, metal: 10 },
-    { fire: 15, metal: 15 },
-    { fire: 10, metal: 20 },
-    { metal: 30 },
-  ],
-};
-
-/** 절기월 내 일수 계산 (1~30) */
-function getDayInMonth(year: number, month: number, day: number, monthBranch: string): number {
-  const jd = JEOLGI_DATES[monthBranch];
-  if (!jd) return 15; // fallback: 중간값
-  const [jm, jday] = jd;
-  const jeolgiStart = new Date(year, jm - 1, jday);
-  // 丑월(1/6): 12월 생은 전년도 처리
-  if (monthBranch === "丑" && month >= 12) {
-    jeolgiStart.setFullYear(year);
-  }
-  const birth = new Date(year, month - 1, day);
-  const diff = Math.round((birth.getTime() - jeolgiStart.getTime()) / (1000 * 60 * 60 * 24)) + 1;
-  return Math.max(1, Math.min(30, diff));
-}
-
-/** 일수 → 5-phase 인덱스 (0~4) */
-function getPhase(dayInMonth: number): number {
-  return Math.min(4, Math.floor((dayInMonth - 1) / 6));
-}
-
-/**
- * 110점 오행 점수 계산 (청월당 알고리즘 v3)
+ * 월지 30점 오행 배분 테이블 (청월당 역분석)
  *
- * 방합: 연지/시지에만 적용, 사왕이 월지일 때만 발동 (일지 무관)
- * 월지: 5-phase 월률분야 기반 배분 (양사고지/양생지)
+ * - 사왕지(子卯午酉) / 음생지(巳亥): 본기 오행
+ * - 양생지(寅申): 이전 계절 오행 (寅→water, 申→fire)
+ * - 음사고지(丑未): 계절 잔여 오행 (丑→water, 未→fire)
+ * - 양사고지(辰戌): 본기 오행 (earth) — 더 정밀한 데이터 확보 시 phase 기반으로 개선 가능
+ */
+const MONTH_BRANCH_ELEMENT: Record<string, Element> = {
+  "子": "water", "丑": "water", "寅": "water", "卯": "wood",
+  "辰": "earth", "巳": "fire",  "午": "fire",  "未": "fire",
+  "申": "fire",  "酉": "metal", "戌": "earth", "亥": "water",
+};
+
+/**
+ * 월지 지장간 테이블 (투출 판정용)
+ * 월간이 월지의 지장간에 포함되어 있으면, 월간의 10점이
+ * 월간 고유 오행이 아닌 월지의 30점 오행으로 이동 (투출 효과)
+ */
+const MONTH_HIDDEN_STEMS: Record<string, string[]> = {
+  "子": ["壬", "癸"], "丑": ["癸", "辛", "己"], "寅": ["戊", "丙", "甲"],
+  "卯": ["甲", "乙"], "辰": ["乙", "癸", "戊"], "巳": ["戊", "庚", "丙"],
+  "午": ["丙", "己", "丁"], "未": ["丁", "乙", "己"], "申": ["戊", "壬", "庚"],
+  "酉": ["庚", "辛"], "戌": ["辛", "丁", "戊"], "亥": ["戊", "甲", "壬"],
+};
+
+/**
+ * 110점 오행 점수 계산 (청월당 역분석 v4)
+ *
+ * 배점: 천간 4×10(40) + 연지10 + 월지30 + 일지15 + 시지15 = 110
+ *
+ * 투출(透出) 규칙: 월간이 월지의 지장간에 포함되어 있으면,
+ * 월간의 10점이 고유 오행 대신 월지의 30점 오행으로 이동.
  */
 function computeOhaeng110(
   pillars: SajuResult["pillars"],
-  input?: { year: number; month: number; day: number },
 ): Record<Element, number> {
   // pillars 순서: [시주(0), 일주(1), 월주(2), 연주(3)]
   const stems = pillars.map(p => p.pillar.stem);
@@ -200,54 +146,34 @@ function computeOhaeng110(
 
   const scores: Record<Element, number> = { wood: 0, fire: 0, earth: 0, metal: 0, water: 0 };
 
-  // 1. 천간: 각 10점
-  for (const stem of stems) {
-    scores[STEM_TO_ELEMENT[stem]] += 10;
-  }
+  // 월지의 30점 오행
+  const monthElement = MONTH_BRANCH_ELEMENT[mg] ?? BRANCH_MAIN_ELEMENT[mg];
 
-  // 2. 연지: 10점 (방합: 사왕==월지일 때만)
-  let ygElement = BRANCH_MAIN_ELEMENT[yg];
-  if (yg in SAGOJI_BANGHAP) {
-    const [bElement, sawang] = SAGOJI_BANGHAP[yg];
-    if (sawang === mg) ygElement = bElement;
-  }
-  scores[ygElement] += 10;
+  // 1. 천간: 각 10점 (투출 적용)
+  const monthStem = stems[2]; // 월간
+  const monthHiddenStems = MONTH_HIDDEN_STEMS[mg] ?? [];
+  const isTuchul = monthHiddenStems.includes(monthStem);
 
-  // 3. 월지: 30점 (유형별 규칙)
-  if (mg in SAGOJI_PHASE_DIST) {
-    // 양사고지 (辰/戌): 5-phase 배분
-    const dim = input ? getDayInMonth(input.year, input.month, input.day, mg) : 15;
-    const phase = getPhase(dim);
-    const dist = SAGOJI_PHASE_DIST[mg][phase];
-    for (const [el, pts] of Object.entries(dist)) {
-      scores[el as Element] += pts;
+  for (let i = 0; i < stems.length; i++) {
+    if (i === 2 && isTuchul) {
+      // 월간이 투출 → 월지의 오행으로 이동
+      scores[monthElement] += 10;
+    } else {
+      scores[STEM_TO_ELEMENT[stems[i]]] += 10;
     }
-  } else if (mg in YANGSAENG_PHASE_DIST) {
-    // 양생지 (寅/申): 5-phase 배분
-    const dim = input ? getDayInMonth(input.year, input.month, input.day, mg) : 15;
-    const phase = getPhase(dim);
-    const dist = YANGSAENG_PHASE_DIST[mg][phase];
-    for (const [el, pts] of Object.entries(dist)) {
-      scores[el as Element] += pts;
-    }
-  } else if (mg in SEASONAL_SAGOJI_ELEMENT) {
-    // 음사고지 (丑/未): 계절 오행
-    scores[SEASONAL_SAGOJI_ELEMENT[mg]] += 30;
-  } else {
-    // 사왕지(子卯午酉) + 음생지(巳亥): 본기 오행
-    scores[BRANCH_MAIN_ELEMENT[mg]] += 30;
   }
 
-  // 4. 일지: 15점, 본기 오행 (방합 미적용)
+  // 2. 연지: 10점, 본기 오행
+  scores[BRANCH_MAIN_ELEMENT[yg]] += 10;
+
+  // 3. 월지: 30점
+  scores[monthElement] += 30;
+
+  // 4. 일지: 15점, 본기 오행
   scores[BRANCH_MAIN_ELEMENT[dg]] += 15;
 
-  // 5. 시지: 15점 (방합: 사왕==월지일 때만)
-  let tgElement = BRANCH_MAIN_ELEMENT[tg];
-  if (tg in SAGOJI_BANGHAP) {
-    const [bElement, sawang] = SAGOJI_BANGHAP[tg];
-    if (sawang === mg) tgElement = bElement;
-  }
-  scores[tgElement] += 15;
+  // 5. 시지: 15점, 본기 오행
+  scores[BRANCH_MAIN_ELEMENT[tg]] += 15;
 
   return scores;
 }
@@ -316,7 +242,7 @@ export function toSajuDisplayData(
 
 export function toOhaengDisplayData(result: SajuResult): OhaengDisplayData {
   // 110점 알고리즘으로 오행 점수 계산
-  const rawScores = computeOhaeng110(result.pillars, result.input);
+  const rawScores = computeOhaeng110(result.pillars);
 
   // distribution은 단순 카운트 (오행분포 개수 표시용)
   const distribution = ELEMENT_ORDER.map((e) => result.ohang[e] || 0);
@@ -512,7 +438,7 @@ export function toImageVars(
   inputGender: string,
 ): SajuImageVars {
   const ohaeng = toOhaengDisplayData(result);
-  const scores = computeOhaeng110(result.pillars, result.input);
+  const scores = computeOhaeng110(result.pillars);
   const maxElement = ELEMENT_ORDER.reduce((a, b) =>
     (scores[a] || 0) >= (scores[b] || 0) ? a : b
   );

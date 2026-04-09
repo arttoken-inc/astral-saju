@@ -2,6 +2,7 @@
 
 import { cdnUrl } from "@/lib/cdn";
 import type { RecommendCard } from "@/data/landing";
+import HScrollRow from "./HScrollRow";
 
 export default function RecommendSection({ cards }: { cards: RecommendCard[] }) {
   return (
@@ -14,7 +15,7 @@ export default function RecommendSection({ cards }: { cards: RecommendCard[] }) 
           💡 로그인 후 맞춤형 추천을 받아보세요!
         </span>
       </div>
-      <div className="scrollbar-hide flex gap-3 overflow-x-auto pl-5">
+      <HScrollRow className="gap-3 pl-5">
         {cards.map((card) => (
           <a
             key={card.href}
@@ -29,7 +30,7 @@ export default function RecommendSection({ cards }: { cards: RecommendCard[] }) 
             />
           </a>
         ))}
-      </div>
+      </HScrollRow>
     </section>
   );
 }

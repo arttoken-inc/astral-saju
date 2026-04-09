@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { cdnUrl } from "@/lib/cdn";
 import type { CelebrityPost, DreamPost } from "@/data/landing";
+import HScrollRow from "./HScrollRow";
 
 interface Props {
   celebrities: CelebrityPost[];
@@ -52,7 +53,7 @@ export default function MagazineSection({ celebrities, dreamPosts }: Props) {
       </div>
 
       {tab === "celebrity" ? (
-        <div className="scrollbar-hide flex gap-3 overflow-x-auto">
+        <HScrollRow className="gap-3">
           {celebrities.map((celeb, i) => (
             <article key={celeb.href} className="w-[220px] flex-shrink-0">
               <a className="block" href={celeb.href}>
@@ -76,9 +77,9 @@ export default function MagazineSection({ celebrities, dreamPosts }: Props) {
               </a>
             </article>
           ))}
-        </div>
+        </HScrollRow>
       ) : (
-        <div className="scrollbar-hide flex gap-3 overflow-x-auto">
+        <HScrollRow className="gap-3">
           {dreamPosts.map((post, i) => (
             <article key={post.href} className="w-[220px] flex-shrink-0">
               <a className="block rounded-lg border border-[#E1E1E1] p-4" href={post.href}>
@@ -94,7 +95,7 @@ export default function MagazineSection({ celebrities, dreamPosts }: Props) {
               </a>
             </article>
           ))}
-        </div>
+        </HScrollRow>
       )}
     </section>
   );
