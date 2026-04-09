@@ -61,7 +61,7 @@
     "dreamPerson": {
       "pattern": "components/day_person/romance/best/masked/{gender}_{ilgan}_{strength}.png",
       "variables": {
-        "gender": { "source": "input.gender", "map": { "남성": "FEMALE", "여성": "MALE" } },
+        "gender": { "source": "input.gender", "map": { "남성": "FEMALE", "여성": "MALE", "male": "FEMALE", "female": "MALE" } },
         "ilgan": { "source": "saju.dayMaster.korean" },
         "strength": { "source": "saju.strength" }
       },
@@ -150,9 +150,9 @@
       { "type": "webtoon-panel", "image": "result/result_1.png" },
       { "type": "webtoon-panel", "image": "result/result_2.png", "scriptKey": "result.saju_intro" },
 
-      { "type": "saju-table" },
-      { "type": "daeun-table" },
-      { "type": "ohaeng" },
+      { "type": "saju-table", "bubble": { "image": "result/result_bubble_0.png", "position": "top-right", "width": "70%", "top": "-8%", "marginTop": "mt-36" } },
+      { "type": "daeun-table", "bubbleTop": { "image": "result/result_bubble_1.png", "position": "top-left", "width": "65.7%", "top": "-20%", "marginTop": "mt-40" }, "bubbleBottom": { "image": "result/result_bubble_2.png", "position": "bottom-right", "width": "68.9%", "bottom": "-25%" } },
+      { "type": "ohaeng", "bubble": { "image": "result/result_bubble_3.png", "position": "top-left", "width": "79.9%", "top": "-3.1%" } },
 
       { "type": "webtoon-panel", "image": "result/result_3.png", "scriptKey": "result.secret" },
 

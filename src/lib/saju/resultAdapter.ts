@@ -436,6 +436,69 @@ export function toDaeunDisplayData(result: SajuResult): DaeunDisplayData {
   return { years, ages, startAge, cycle };
 }
 
+/** 운명의 짝 데이터 생성 (일간 오행 + 신강/신약 기반 결정론적 매핑) */
+export function toDestinyPartnerData(
+  result: SajuResult,
+  inputGender: string,
+): DestinyPartnerDisplayData {
+  const dayElement = result.pillars[1].pillar.stemElement;
+  const ohaeng = toOhaengDisplayData(result);
+  const isStrong = ["신강", "태강", "극왕"].includes(ohaeng.strength.level);
+  // 상대방 성별은 반대
+  const partnerGender = inputGender === "남성" || inputGender === "male" ? "female" : "male";
+
+  const JOBS: Record<Element, string[]> = {
+    wood: ["교육·연구", "기획·컨설팅"],
+    fire: ["예술·엔터", "마케팅·홍보"],
+    earth: ["금융·부동산", "의료·복지"],
+    metal: ["데이터·연구", "법률·공공"],
+    water: ["IT·개발", "무역·유통"],
+  };
+
+  const HEIGHTS: Record<string, string[]> = {
+    female: ["157cm", "160cm", "162cm", "165cm", "168cm"],
+    male: ["172cm", "175cm", "178cm", "180cm", "183cm"],
+  };
+
+  const FACE: Record<Element, string[]> = {
+    wood: ["큰 눈", "긴 얼굴형"],
+    fire: ["밝은인상", "또렷한콧대"],
+    earth: ["둥근얼굴", "따뜻한눈빛"],
+    metal: ["또렷한콧대", "깔끔한헤어"],
+    water: ["차분한인상", "매끈한피부"],
+  };
+
+  const PERSONALITY: Record<Element, string[]> = {
+    wood: ["리더십강함", "진취적"],
+    fire: ["열정적", "사교적"],
+    earth: ["안정지향", "성실함"],
+    metal: ["정리정돈잘함", "분석적"],
+    water: ["유연한사고", "직관적"],
+  };
+
+  const TRAITS: Record<Element, string[]> = {
+    wood: ["추진력", "자기계발"],
+    fire: ["감성적매력", "에너지넘침"],
+    earth: ["든든한지원자", "가정적"],
+    metal: ["논리적인매력", "루틴중시"],
+    water: ["창의적", "배려심깊음"],
+  };
+
+  // 상대방 오행: 신강이면 나를 극하는 오행, 신약이면 일간 자체 오행
+  const partnerElement = isStrong
+    ? getControllingElement(dayElement)
+    : dayElement;
+
+  const heightIdx = ELEMENT_ORDER.indexOf(dayElement) % 5;
+  const job = JOBS[partnerElement][0];
+  const height = HEIGHTS[partnerGender][heightIdx];
+  const appearance = [height, FACE[partnerElement][0], FACE[partnerElement][1]];
+  const personality = PERSONALITY[partnerElement];
+  const traits = TRAITS[partnerElement];
+
+  return { job, appearance, personality, traits };
+}
+
 /** 동적 이미지 변수용 사주 요약 */
 export interface SajuImageVars {
   gender: string;       // "남성" | "여성"
@@ -454,10 +517,19 @@ export function toImageVars(
     (scores[a] || 0) >= (scores[b] || 0) ? a : b
   );
 
+  // 성별 정규화 (영어 → 한국어)
+  const genderNorm = inputGender === "male" ? "남성"
+    : inputGender === "female" ? "여성"
+    : inputGender;
+
+  // CDN 이미지는 신강/신약 2종류만 존재
+  const level = ohaeng.strength.level;
+  const strengthSimple = ["신강", "태강", "극왕"].includes(level) ? "신강" : "신약";
+
   return {
-    gender: inputGender,
+    gender: genderNorm,
     ilgan: ohaeng.strength.ilgan,
-    strength: ohaeng.strength.level,
+    strength: strengthSimple,
     dominantElement: ELEMENT_KR[maxElement],
   };
 }

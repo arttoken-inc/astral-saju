@@ -425,7 +425,7 @@ function toYinYang(korYinYang: string): YinYang {
 
 // ── JDN(줄리안 날짜 수) 기반 일진 계산 ──
 // 기준: 2000-01-07 = 甲子일 (JDN 2451551)
-const JDN_JIAZI_REF = 2451551; // 2000-01-07 甲子일
+const JDN_JIAZI_REF = 2451546; // 2000-01-02 甲子일
 
 function julianDayNumber(y: number, m: number, d: number): number {
   const a = Math.floor((14 - m) / 12);

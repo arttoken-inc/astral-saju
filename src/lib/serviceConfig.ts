@@ -75,16 +75,42 @@ export interface ImageSequenceSection {
 export interface SajuTableSection {
   type: "saju-table";
   className?: string;
+  bubble?: {
+    image: string;
+    position?: string;
+    top?: string;
+    width?: string;
+    marginTop?: string;
+  };
 }
 
 export interface DaeunTableSection {
   type: "daeun-table";
   className?: string;
+  bubbleTop?: {
+    image: string;
+    position?: string;
+    top?: string;
+    width?: string;
+    marginTop?: string;
+  };
+  bubbleBottom?: {
+    image: string;
+    position?: string;
+    bottom?: string;
+    width?: string;
+  };
 }
 
 export interface OhaengSectionConfig {
   type: "ohaeng";
   className?: string;
+  bubble?: {
+    image: string;
+    position?: string;
+    top?: string;
+    width?: string;
+  };
 }
 
 export interface SpeechBubbleSection {

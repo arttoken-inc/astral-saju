@@ -5,6 +5,7 @@ import {
   toOhaengDisplayData,
   toDaeunDisplayData,
   toImageVars,
+  toDestinyPartnerData,
 } from "@/lib/saju/resultAdapter";
 import { resolveAllDynamicImages } from "@/lib/dynamicImage";
 
@@ -82,13 +83,17 @@ export async function POST(request: Request) {
       ? resolveAllDynamicImages(dynamicImages, imageVars)
       : {};
 
+    // 운명의 짝 데이터
+    const destinyPartner = toDestinyPartnerData(sajuResult, gender);
+
     // 위기 리스트 (사주 기반 간단 생성)
-    const crisisList = generateCrisisList(sajuResult);
+    const crisisList = generateCrisisList(sajuResult, ohaengDisplay.strength.level);
 
     return NextResponse.json({
       sajuDisplay,
       ohaengDisplay,
       daeunDisplay,
+      destinyPartner,
       imageVars,
       resolvedImages,
       crisisList,
@@ -102,51 +107,97 @@ export async function POST(request: Request) {
   }
 }
 
-/** 사주 결과를 바탕으로 위기 리스트 생성 */
-function generateCrisisList(result: SajuResult): string[] {
+/** 사주 결과를 바탕으로 위기 리스트 생성 (십신 분포 기반) */
+function generateCrisisList(result: SajuResult, strengthLevel: string): string[] {
   const items: string[] = [];
 
-  // 충(冲) 관계 기반 위기
+  // 십신 분포 카운트 (천간 + 지지)
+  const sipsinCount: Record<string, number> = {};
+  for (const p of result.pillars) {
+    if (p.stemSipsin && p.stemSipsin !== "本元") {
+      sipsinCount[p.stemSipsin] = (sipsinCount[p.stemSipsin] || 0) + 1;
+    }
+    if (p.branchSipsin) {
+      sipsinCount[p.branchSipsin] = (sipsinCount[p.branchSipsin] || 0) + 1;
+    }
+  }
+
+  const isWeak = ["신약", "태약", "극약"].includes(strengthLevel);
+
+  // 재성 (정재 + 편재) 개수
+  const jaeCount = (sipsinCount["正財"] || 0) + (sipsinCount["偏財"] || 0);
+  // 관성 (정관 + 편관) 개수
+  const gwanCount = (sipsinCount["正官"] || 0) + (sipsinCount["偏官"] || 0);
+  // 식상 (식신 + 상관) 개수
+  const sikCount = (sipsinCount["食神"] || 0) + (sipsinCount["傷官"] || 0);
+  // 인성 (정인 + 편인) 개수
+  const inCount = (sipsinCount["正印"] || 0) + (sipsinCount["偏印"] || 0);
+  // 비겁 (비견 + 겁재) 개수
+  const biCount = (sipsinCount["比肩"] || 0) + (sipsinCount["劫財"] || 0);
+
+  // 재성 과다 → 이성 관계 문제
+  if (jaeCount >= 3) {
+    items.push("복잡한 이성 관계 문제");
+  } else if (jaeCount >= 2) {
+    items.push("재물 관련 예기치 못한 손실");
+  }
+
+  // 식상 + 신약 → 노력 대비 성과 부족
+  if (sikCount >= 1 && isWeak) {
+    items.push("노력해도 성과가 없음");
+  } else if (sikCount >= 2) {
+    items.push("말이나 행동으로 인한 구설수");
+  }
+
+  // 관성 + 신약 → 공개적 망신/압박
+  if (gwanCount >= 1 && isWeak) {
+    items.push("공개적인 실수로 인한 망신");
+  } else if (gwanCount >= 2) {
+    items.push("직장이나 조직에서의 갈등");
+  }
+
+  // 인성 과다 → 우유부단/의존
+  if (inCount >= 3) {
+    items.push("결정 장애로 인한 기회 상실");
+  }
+
+  // 비겁 과다 → 경쟁/배신
+  if (biCount >= 3) {
+    items.push("가까운 사람과의 금전 분쟁");
+  }
+
+  // 충(冲) 관계 기반
   result.relations.pairs.forEach((pair) => {
     for (const rel of pair.branch) {
-      if (rel.type.includes("충")) {
-        items.push(`운세의 큰 변동이 예상되는 시기 (${rel.detail || "지지충"})`);
-      }
-    }
-    for (const rel of pair.stem) {
-      if (rel.type.includes("충")) {
-        items.push(`예상치 못한 갈등 상황 (${rel.detail || "천간충"})`);
+      if (rel.type.includes("충") && items.length < 3) {
+        items.push("운세의 큰 변동이 예상되는 시기");
       }
     }
   });
 
   // 특수살 기반
-  if (result.specialSals.baekho) {
+  if (result.specialSals.baekho && items.length < 3) {
     items.push("건강 관련 주의가 필요한 시기");
   }
-  if (result.specialSals.goegang) {
-    items.push("대인관계에서의 마찰 가능성");
-  }
-  if (result.specialSals.yangin.length > 0) {
+  if (result.specialSals.yangin.length > 0 && items.length < 3) {
     items.push("급격한 변화에 대한 대비 필요");
   }
 
-  // 기본 항목 보충
-  if (items.length < 3) {
-    const defaults = [
-      "예기치 못한 재정적 변동",
-      "중요한 인간관계의 변화",
-      "건강 관리에 신경 써야 할 시기",
-    ];
-    for (const d of defaults) {
-      if (items.length >= 3) break;
-      if (!items.includes(d)) items.push(d);
-    }
+  // 최소 3개 보장
+  const fallbacks = [
+    "예상치 못한 환경 변화",
+    "중요한 인간관계의 변화",
+    "건강 관리에 신경 써야 할 시기",
+  ];
+  for (const f of fallbacks) {
+    if (items.length >= 3) break;
+    if (!items.includes(f)) items.push(f);
   }
 
-  // 블러 처리용 추가 항목
-  items.push("더 많은 위기를 확인하고 싶으면 복채가 필요해요.");
-  items.push("확인하기 위해 복채가 필요한 위기에요.");
+  // 최대 3개 + 블러 처리용 항목
+  const top3 = items.slice(0, 3);
+  top3.push("더 많은 위기를 확인하고 싶으면 복채가 필요해요.");
+  top3.push("확인하기 위해 복채가 필요한 위기에요.");
 
-  return items;
+  return top3;
 }

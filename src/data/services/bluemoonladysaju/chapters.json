@@ -1,0 +1,214 @@
+{
+  "cdnBase": "https://cdn.aifortunedoctor.com/web/live/current/images",
+  "chapters": [
+    {
+      "id": "prologue",
+      "title": "프롤로그: 안녕하세요, 청월입니다",
+      "sections": [
+        { "type": "image", "src": "ai/00_intro/intro_0.png", "textKey": "prologue.greeting" },
+        { "type": "image", "src": "ai/00_intro/intro_1.png" },
+        { "type": "image", "src": "ai/00_intro/intro_2.png", "textKey": "prologue.message" },
+        { "type": "image", "src": "ai/00_intro/intro_3.png" },
+        { "type": "image", "src": "ai/00_intro/intro_4.png" },
+        { "type": "image", "src": "ai/00_intro/intro_5.png", "textKey": "prologue.preview" },
+        { "type": "saju-sense", "src": "ai/00_intro/intro_saju_sense.png" }
+      ]
+    },
+    {
+      "id": "ch1-saju",
+      "title": "제1장: 나의 사주팔자",
+      "sections": [
+        { "type": "image", "src": "ai/01_explanation/explanation_0.png", "textKey": "ch1.intro" },
+        { "type": "saju-table" },
+        { "type": "image", "src": "ai/01_explanation/explanation_1.png" },
+        { "type": "image", "src": "ai/01_explanation/explanation_1_2.png" },
+        { "type": "image", "src": "ai/01_explanation/explanation_2.png" },
+        { "type": "daeun-table" },
+        { "type": "image", "src": "ai/01_explanation/explanation_3.png" },
+        { "type": "image", "src": "ai/01_explanation/explanation_4_251013.png" },
+        { "type": "ohaeng" },
+        { "type": "image", "src": "ai/01_explanation/explanation_5.png" },
+        { "type": "image", "src": "ai/01_explanation/explanation_6.png", "textKey": "ch1.closing" },
+        { "type": "saju-sense", "src": "ai/01_explanation/explanation_saju_sense.png" }
+      ]
+    },
+    {
+      "id": "ch2-day",
+      "title": "제2장: 나는 어떤 사람인가? - 일주와 오행 분석",
+      "aiKey": "personality",
+      "sections": [
+        { "type": "image", "src": "ai/02_day/day_0.png", "textKey": "ch2.intro" },
+        { "type": "day-animal" },
+        { "type": "day-character" },
+        { "type": "text-card", "aiKey": "personality" },
+        { "type": "image", "src": "ai/02_day/day_1_251001.png" },
+        { "type": "text-card", "aiKey": "personalityDetail" },
+        { "type": "image", "src": "ai/02_day/day_2_251001.png" },
+        { "type": "ohaeng" },
+        { "type": "text-card", "aiKey": "yongshinAnalysis" },
+        { "type": "image", "src": "ai/02_day/day_3_251001.png" },
+        { "type": "image", "src": "ai/02_day/day_4_251001.png" },
+        { "type": "image", "src": "ai/02_day/day_5_251001.png", "textKey": "ch2.closing" },
+        { "type": "saju-sense", "src": "ai/02_day/day_saju_sense.png" }
+      ]
+    },
+    {
+      "id": "ch3-ten",
+      "title": "제3장: 내가 세상을 살아가는 방법 - 십성 분석",
+      "aiKey": "tenGods",
+      "sections": [
+        { "type": "image", "src": "ai/03_ten/ten_0_250922.png", "textKey": "ch3.intro" },
+        { "type": "saju-table" },
+        { "type": "text-card", "aiKey": "tenGods" },
+        { "type": "image", "src": "ai/03_ten/ten_1.png" },
+        { "type": "image", "src": "ai/03_ten/ten_2.png" },
+        { "type": "image", "src": "ai/03_ten/ten_3.png", "textKey": "ch3.closing" },
+        { "type": "saju-sense", "src": "ai/03_ten/ten_saju_sense_250923.png" }
+      ]
+    },
+    {
+      "id": "ch4-unsung",
+      "title": "제4장: 나의 운, 이렇게 흘러간다 - 십이운성 분석",
+      "aiKey": "majorCycles",
+      "sections": [
+        { "type": "image", "src": "ai/04_unsung/unsung_0.png", "textKey": "ch4.intro" },
+        { "type": "saju-table" },
+        { "type": "text-card", "aiKey": "majorCycles" },
+        { "type": "image", "src": "ai/04_unsung/unsung_1.png" },
+        { "type": "image", "src": "ai/04_unsung/unsung_2.png", "textKey": "ch4.closing" },
+        { "type": "saju-sense", "src": "ai/04_unsung/unsung_saju_sense.png" }
+      ]
+    },
+    {
+      "id": "ch5-risk",
+      "title": "제5장: 위기 또는 기회 - 신살 분석",
+      "aiKey": "risk",
+      "sections": [
+        { "type": "image", "src": "ai/05_risk/risk_0.png", "textKey": "ch5.intro" },
+        { "type": "saju-table" },
+        { "type": "text-card", "aiKey": "risk" },
+        { "type": "image", "src": "ai/05_risk/risk_1.png" },
+        { "type": "image", "src": "ai/05_risk/risk_2.png", "textKey": "ch5.closing" },
+        { "type": "saju-sense", "src": "ai/05_risk/risk_saju_sense.png" }
+      ]
+    },
+    {
+      "id": "ch6-noble",
+      "title": "제6장: 나를 도와주는 귀인들 - 귀인 분석",
+      "aiKey": "relationship",
+      "sections": [
+        { "type": "image", "src": "ai/06_noble/noble_0.png", "textKey": "ch6.intro" },
+        { "type": "saju-table" },
+        { "type": "text-card", "aiKey": "relationship" },
+        { "type": "image", "src": "ai/06_noble/noble_1.png" },
+        { "type": "image", "src": "ai/06_noble/noble_2.png", "textKey": "ch6.closing" }
+      ]
+    },
+    {
+      "id": "ch7-wealth",
+      "title": "제7장: 재물운",
+      "aiKey": "wealth",
+      "sections": [
+        { "type": "image", "src": "ai/07_wealth/wealth_0.png", "textKey": "ch7.intro" },
+        { "type": "text-card", "aiKey": "wealth" },
+        { "type": "image", "src": "ai/07_wealth/wealth_1.png" },
+        { "type": "image", "src": "ai/07_wealth/wealth_2.png" },
+        { "type": "image", "src": "ai/07_wealth/wealth_3.png" },
+        { "type": "image", "src": "ai/07_wealth/wealth_4.png" },
+        { "type": "image", "src": "ai/07_wealth/wealth_5.png", "textKey": "ch7.closing" }
+      ]
+    },
+    {
+      "id": "ch8-love",
+      "title": "제8장: 연애&결혼운",
+      "aiKey": "love",
+      "sections": [
+        { "type": "image", "src": "ai/08_love/love_0.png", "textKey": "ch8.intro" },
+        { "type": "text-card", "aiKey": "love" },
+        { "type": "image", "src": "ai/08_love/love_1.png" },
+        { "type": "destiny-partner" },
+        { "type": "image", "src": "ai/08_love/love_2.png" },
+        { "type": "image", "src": "ai/08_love/love_3.png" },
+        { "type": "image", "src": "ai/08_love/love_4_1_251202.png" },
+        { "type": "image", "src": "ai/08_love/love_4_2_251202.png" },
+        { "type": "image", "src": "ai/08_love/love_5.png", "textKey": "ch8.closing" }
+      ]
+    },
+    {
+      "id": "ch9-career",
+      "title": "제9장: 직업운",
+      "aiKey": "career",
+      "sections": [
+        { "type": "image", "src": "ai/09_career/career_0.png", "textKey": "ch9.intro" },
+        { "type": "text-card", "aiKey": "career" },
+        { "type": "image", "src": "ai/09_career/career_1.png" },
+        { "type": "image", "src": "ai/09_career/career_2.png" },
+        { "type": "image", "src": "ai/09_career/career_3.png" },
+        { "type": "image", "src": "ai/09_career/career_4.png", "textKey": "ch9.closing" }
+      ]
+    },
+    {
+      "id": "ch10-health",
+      "title": "제10장: 건강운",
+      "aiKey": "health",
+      "sections": [
+        { "type": "image", "src": "ai/10_health/health_0.png", "textKey": "ch10.intro" },
+        { "type": "text-card", "aiKey": "health" },
+        { "type": "image", "src": "ai/10_health/health_1.png" },
+        { "type": "image", "src": "ai/10_health/health_2.png", "textKey": "ch10.closing" }
+      ]
+    },
+    {
+      "id": "ch11-luck",
+      "title": "제11장: 대운",
+      "aiKey": "majorCyclesDetail",
+      "sections": [
+        { "type": "image", "src": "ai/11_luck/luck_0.png", "textKey": "ch11.intro" },
+        { "type": "daeun-table" },
+        { "type": "text-card", "aiKey": "majorCyclesDetail" },
+        { "type": "image", "src": "ai/11_luck/luck_1.png" },
+        { "type": "image", "src": "ai/11_luck/luck_2.png", "textKey": "ch11.closing" },
+        { "type": "saju-sense", "src": "ai/11_luck/luck_saju_sense.png" }
+      ]
+    },
+    {
+      "id": "ch12-future",
+      "title": "제12장: 향후 5년간의 연운과 삼재",
+      "aiKey": "yearlyFortune",
+      "sections": [
+        { "type": "image", "src": "ai/12_future/future_0.png", "textKey": "ch12.intro" },
+        { "type": "text-card", "aiKey": "yearlyFortune" },
+        { "type": "image", "src": "ai/12_future/future_1.png" },
+        { "type": "image", "src": "ai/12_future/future_2.png" },
+        { "type": "image", "src": "ai/12_future/future_3.png" },
+        { "type": "image", "src": "ai/12_future/future_question_teaser.png" },
+        { "type": "saju-sense", "src": "ai/12_future/future_saju_sense.png" }
+      ]
+    },
+    {
+      "id": "ch13-question",
+      "title": "제13장: 질문하신 부분, 답변드릴게요",
+      "aiKey": "questionAnswer",
+      "sections": [
+        { "type": "image", "src": "ai/13_question/question_0.png", "textKey": "ch13.intro" },
+        { "type": "image", "src": "ai/13_question/question_1.png" },
+        { "type": "text-card", "aiKey": "questionAnswer" },
+        { "type": "image", "src": "ai/13_question/question_2.png" },
+        { "type": "image", "src": "ai/13_question/question_3_251111.png" },
+        { "type": "image", "src": "ai/13_question/question_4_251111.png" }
+      ]
+    },
+    {
+      "id": "ch14-ending",
+      "title": "제14장: 마치며",
+      "sections": [
+        { "type": "image", "src": "ai/14_ending/ending-title-when-question-exist.png" },
+        { "type": "image", "src": "ai/14_ending/ending_0.png", "textKey": "ch14.ending" },
+        { "type": "image", "src": "ai/14_ending/ending_1.png" },
+        { "type": "image", "src": "ai/14_ending/ending_2.png" },
+        { "type": "image", "src": "ai/14_ending/ending_3.png" },
+        { "type": "review-cta" }
+      ]
+    }
+  ]
+}

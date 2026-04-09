@@ -17,7 +17,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
       const isAdmin = nextUrl.pathname.startsWith("/admin") || nextUrl.pathname.startsWith("/api/admin");
-      const isProtected = nextUrl.pathname.startsWith("/mypage");
+      const isProtected = nextUrl.pathname.startsWith("/mypage") || nextUrl.pathname === "/replay";
 
       if ((isAdmin || isProtected) && !isLoggedIn) {
         const redirectUrl = new URL("/auth/login", nextUrl.origin);

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import type {
   LoadedServiceConfig,
@@ -12,6 +13,7 @@ import type {
   SajuDisplayData,
   OhaengDisplayData,
   DaeunDisplayData,
+  DestinyPartnerDisplayData,
 } from "@/lib/sajuDisplayTypes";
 import { resolveServiceImagePath } from "@/lib/configLoader";
 import { replaceTemplate } from "@/lib/templateReplace";
@@ -28,6 +30,7 @@ interface SajuAnalysisResult {
   sajuDisplay: SajuDisplayData;
   ohaengDisplay: OhaengDisplayData;
   daeunDisplay: DaeunDisplayData;
+  destinyPartner: DestinyPartnerDisplayData;
   resolvedImages: Record<string, string>;
   crisisList: string[];
 }
@@ -108,11 +111,13 @@ function SectionRenderer({
   config,
   vars,
   analysis,
+  onPayClick,
 }: {
   section: ResultSection;
   config: LoadedServiceConfig;
   vars: Record<string, string>;
   analysis: SajuAnalysisResult | null;
+  onPayClick?: () => void;
 }) {
   const { service, script } = config;
   const serviceId = service.meta.serviceId;
@@ -148,9 +153,11 @@ function SectionRenderer({
         </div>
       );
 
-    case "saju-table":
+    case "saju-table": {
+      const bbl = section.bubble;
       return (
-        <div className={section.className || "relative mt-36"}>
+        <div className={section.className || `relative ${bbl?.marginTop || "mt-36"}`}>
+          {bbl && <img alt="" src={img(serviceId, bbl.image)} loading="lazy" className={`absolute z-10 -translate-y-1/2 ${bbl.position === "top-right" ? "right-0" : "left-0"}`} style={{ top: bbl.top, width: bbl.width }} />}
           {!analysis ? <LoadingSkeleton /> : (
             <CardWrapper>
               <SajuTable data={analysis.sajuDisplay} decorations={decs} />
@@ -158,10 +165,15 @@ function SectionRenderer({
           )}
         </div>
       );
+    }
 
-    case "daeun-table":
+    case "daeun-table": {
+      const bt = section.bubbleTop;
+      const bb = section.bubbleBottom;
       return (
-        <div className={section.className || "relative mt-40"}>
+        <div className={section.className || `relative ${bt?.marginTop || "mt-40"}`}>
+          {bt && <img alt="" src={img(serviceId, bt.image)} loading="lazy" className={`absolute z-10 -translate-y-1/2 ${bt.position === "top-left" ? "left-0" : "right-0"}`} style={{ top: bt.top, width: bt.width }} />}
+          {bb && <img alt="" src={img(serviceId, bb.image)} loading="lazy" className={`absolute z-10 translate-y-1/2 ${bb.position === "bottom-right" ? "right-0" : "left-0"}`} style={{ bottom: bb.bottom, width: bb.width }} />}
           {!analysis ? <LoadingSkeleton /> : (
             <CardWrapper>
               <DaeunTable data={analysis.sajuDisplay} daeun={analysis.daeunDisplay} decorations={decs} />
@@ -169,10 +181,13 @@ function SectionRenderer({
           )}
         </div>
       );
+    }
 
-    case "ohaeng":
+    case "ohaeng": {
+      const ob = section.bubble;
       return (
         <div className={section.className || "relative mb-10 mt-80"}>
+          {ob && <img alt="" src={img(serviceId, ob.image)} loading="lazy" className={`absolute z-10 -translate-y-1/2 ${ob.position === "top-left" ? "left-0" : "right-0"}`} style={{ top: ob.top, width: ob.width }} />}
           {!analysis ? <LoadingSkeleton /> : (
             <CardWrapper>
               <OhaengSection data={analysis.sajuDisplay} ohaeng={analysis.ohaengDisplay} decorations={decs} />
@@ -180,12 +195,13 @@ function SectionRenderer({
           )}
         </div>
       );
+    }
 
     case "speech-bubble": {
       const scriptData = resolveScript(script, section.scriptKey);
       const text = typeof scriptData === "string" ? scriptData : "";
       return (
-        <div className={`mx-auto mb-5 mt-10 w-fit border border-black bg-white px-4 py-3 text-center font-gapyeong text-base leading-[150%] shadow-md ${section.className || ""}`}>
+        <div className={`mx-auto mb-5 mt-10 w-fit border border-black bg-white px-4 py-3 text-center font-gapyeong text-lg leading-[150%] shadow-md ${section.className || ""}`}>
           {t(text).split("\n").map((line, i) => (
             <span key={i}>{i > 0 && <br />}{line}</span>
           ))}
@@ -200,6 +216,14 @@ function SectionRenderer({
       const dreamPersonImg = resolvedImg
         ? cdnUrl(resolvedImg)
         : rule?.fallback ? cdnUrl(rule.fallback) : "";
+      const dp = analysis?.destinyPartner;
+
+      const TagChip = ({ text, blurred = false }: { text: string; blurred?: boolean }) => (
+        <div className="rounded-full border border-[#486493] bg-[#BDCEED]/20 px-3 py-2 font-pretendard text-sm font-semibold text-[#2B557E]">
+          <span className={blurred ? "pointer-events-none select-none blur-sm [-webkit-touch-callout:none] [-webkit-user-select:none]" : ""}>{text}</span>
+        </div>
+      );
+
       return (
         <CardWrapper>
           <div className="relative h-full border-[3px] border-[#1B2F49] bg-[#F5F3EC] shadow-md">
@@ -220,11 +244,46 @@ function SectionRenderer({
                   </div>
                 </div>
                 <div className="w-full border-b border-[#A1A1A1]" />
-                <div className="mt-10 space-y-6 px-4">
-                  <p className="text-center font-pretendard text-sm text-gray-400">
-                    {analysis ? "운명의 짝 상세 정보는 유료 분석에서 확인하세요" : "사주 분석 후 운명의 짝 정보가 표시됩니다"}
-                  </p>
-                </div>
+                {dp ? (
+                  <div className="mt-10 space-y-6 px-4">
+                    <div className="space-y-3">
+                      <div className="font-pretendard text-base font-semibold leading-none">직업</div>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <TagChip text={dp.job} blurred />
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <div className="font-pretendard text-base font-semibold leading-none">외모</div>
+                      <div className="flex flex-wrap items-center gap-2">
+                        {dp.appearance.map((item, i) => (
+                          <TagChip key={i} text={item} blurred={i === 1} />
+                        ))}
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <div className="font-pretendard text-base font-semibold leading-none">성격</div>
+                      <div className="flex flex-wrap items-center gap-2">
+                        {dp.personality.map((item, i) => (
+                          <TagChip key={i} text={item} blurred={i === 0} />
+                        ))}
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <div className="font-pretendard text-base font-semibold leading-none">특징</div>
+                      <div className="flex flex-wrap items-center gap-2">
+                        {dp.traits.map((item, i) => (
+                          <TagChip key={i} text={item} blurred={i === 1} />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="mt-10 space-y-6 px-4">
+                    <p className="text-center font-pretendard text-sm text-gray-400">
+                      사주 분석 후 운명의 짝 정보가 표시됩니다
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -243,7 +302,7 @@ function SectionRenderer({
       return (
         <div className={section.className || "relative mb-10 mt-28 px-3"}>
           {typeof speechText === "string" && (
-            <div className="mx-auto mb-5 mt-10 w-fit border border-black bg-white px-4 py-3 text-center font-gapyeong text-base leading-[150%] shadow-md">
+            <div className="mx-auto mb-5 mt-10 w-fit border border-black bg-white px-4 py-3 text-center font-gapyeong text-lg leading-[150%] shadow-md">
               {t(speechText).split("\n").map((line, i) => (
                 <span key={i}>{i > 0 && <br />}{line}</span>
               ))}
@@ -285,7 +344,7 @@ function SectionRenderer({
             <img className="h-full w-full object-cover" alt="" src={img(serviceId, section.image)} loading="lazy" />
           </div>
           <div className="absolute inset-x-0 w-full -translate-y-1/2" style={{ top: section.buttonPosition.top, height: section.buttonPosition.height, paddingLeft: section.buttonPosition.px, paddingRight: section.buttonPosition.px }}>
-            <button className="z-10 h-full w-full rounded-b-3xl bg-transparent" />
+            <button onClick={onPayClick} className="z-10 h-full w-full cursor-pointer rounded-b-3xl bg-transparent" />
           </div>
         </div>
       );
@@ -299,6 +358,165 @@ function SectionRenderer({
 }
 
 // ---------------------------------------------------------------------------
+// Payment Sheet
+// ---------------------------------------------------------------------------
+
+type PaymentStep = "select" | "processing" | "complete";
+
+function PaymentSheet({
+  open,
+  onClose,
+  serviceTitle,
+  price,
+  accentColor,
+  onComplete,
+}: {
+  open: boolean;
+  onClose: () => void;
+  serviceTitle: string;
+  price: number;
+  accentColor: string;
+  onComplete: () => void;
+}) {
+  const [step, setStep] = useState<PaymentStep>("select");
+  const [method, setMethod] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!open) {
+      setStep("select");
+      setMethod(null);
+    }
+  }, [open]);
+
+  const handlePay = () => {
+    if (!method) return;
+    setStep("processing");
+    setTimeout(() => {
+      setStep("complete");
+      setTimeout(() => onComplete(), 800);
+    }, 1500);
+  };
+
+  if (!open) return null;
+
+  const discountedPrice = price;
+  const originalPrice = Math.round(price * 1.5 / 100) * 100;
+  const discountPercent = Math.round((1 - discountedPrice / originalPrice) * 100);
+
+  const methods = [
+    { id: "kakaopay", label: "카카오페이", icon: "💛" },
+    { id: "naverpay", label: "네이버페이", icon: "💚" },
+    { id: "card", label: "신용카드", icon: "💳" },
+    { id: "phone", label: "휴대폰 결제", icon: "📱" },
+  ];
+
+  return (
+    <div className="fixed inset-0 z-[70] flex items-end justify-center">
+      <button
+        className="absolute inset-0 bg-black/50"
+        onClick={step === "select" ? onClose : undefined}
+        aria-label="close"
+      />
+      <div className="relative z-10 w-full max-w-md rounded-t-2xl bg-white pb-8">
+        {/* Handle */}
+        <div className="flex justify-center pt-3 pb-2">
+          <div className="h-1 w-10 rounded-full bg-[#D9D9D9]" />
+        </div>
+
+        {step === "select" && (
+          <div className="px-6">
+            {/* Title */}
+            <h3 className="mb-1 font-pretendard text-lg font-bold text-[#111]">
+              {serviceTitle}
+            </h3>
+            <p className="mb-5 font-pretendard text-xs text-[#999]">
+              AI 기반 프리미엄 사주 분석 리포트
+            </p>
+
+            {/* Price */}
+            <div className="mb-6 flex items-baseline gap-2">
+              <span className="font-pretendard text-sm text-[#999] line-through">
+                {originalPrice.toLocaleString()}원
+              </span>
+              <span className="font-pretendard text-2xl font-bold text-[#111]">
+                {discountedPrice.toLocaleString()}원
+              </span>
+              <span className="rounded bg-red-500 px-1.5 py-0.5 font-pretendard text-xs font-bold text-white">
+                {discountPercent}%
+              </span>
+            </div>
+
+            {/* Payment methods */}
+            <p className="mb-3 font-pretendard text-sm font-medium text-[#333]">
+              결제 수단 선택
+            </p>
+            <div className="mb-6 grid grid-cols-2 gap-2">
+              {methods.map((m) => (
+                <button
+                  key={m.id}
+                  onClick={() => setMethod(m.id)}
+                  className={`flex cursor-pointer items-center gap-2 rounded-xl border-2 px-4 py-3 font-pretendard text-sm transition-colors ${
+                    method === m.id
+                      ? "border-[#2B557E] bg-[#F0F4F8]"
+                      : "border-[#E8E8E8] bg-white hover:border-[#CCC]"
+                  }`}
+                >
+                  <span className="text-lg">{m.icon}</span>
+                  <span className={method === m.id ? "font-medium text-[#111]" : "text-[#555]"}>
+                    {m.label}
+                  </span>
+                </button>
+              ))}
+            </div>
+
+            {/* Pay button */}
+            <button
+              onClick={handlePay}
+              disabled={!method}
+              className="mb-2 flex h-14 w-full cursor-pointer items-center justify-center rounded-xl font-pretendard text-lg font-bold text-white transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
+              style={{ backgroundColor: accentColor }}
+            >
+              {discountedPrice.toLocaleString()}원 결제하기
+            </button>
+            <p className="text-center font-pretendard text-[11px] text-[#BBB]">
+              결제 후 즉시 전체 사주풀이를 확인하실 수 있습니다
+            </p>
+          </div>
+        )}
+
+        {step === "processing" && (
+          <div className="flex flex-col items-center px-6 py-12">
+            <div className="mb-4 h-10 w-10 animate-spin rounded-full border-4 border-[#E8E8E8] border-t-[#2B557E]" />
+            <p className="font-pretendard text-base font-medium text-[#333]">
+              결제 처리 중...
+            </p>
+            <p className="mt-1 font-pretendard text-sm text-[#999]">
+              잠시만 기다려 주세요
+            </p>
+          </div>
+        )}
+
+        {step === "complete" && (
+          <div className="flex flex-col items-center px-6 py-12">
+            <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-green-100">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                <path d="M5 13L9 17L19 7" stroke="#22C55E" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
+            <p className="font-pretendard text-base font-bold text-[#111]">
+              결제가 완료되었습니다!
+            </p>
+            <p className="mt-1 font-pretendard text-sm text-[#999]">
+              사주풀이 전체 리포트로 이동합니다...
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Sticky Payment Bar
 // ---------------------------------------------------------------------------
 
@@ -307,11 +525,13 @@ function StickyPaymentBar({
   buttonColor,
   buttonText,
   countdown,
+  onPayClick,
 }: {
   visible: boolean;
   buttonColor: string;
   buttonText: string;
   countdown: { h: number; m: number; s: number };
+  onPayClick: () => void;
 }) {
   const [time, setTime] = useState(countdown);
 
@@ -345,6 +565,7 @@ function StickyPaymentBar({
         </div>
       </div>
       <button
+        onClick={onPayClick}
         className="flex h-12 w-full cursor-pointer items-center justify-center rounded-[0.625rem] px-2.5 py-3 text-center font-pretendard text-xl font-semibold text-white"
         style={{ backgroundColor: buttonColor }}
       >
@@ -362,10 +583,12 @@ function StickyPaymentBar({
 export default function ServiceResultPage({ config }: { config: LoadedServiceConfig }) {
   const { service, script } = config;
   const serviceId = service.meta.serviceId;
+  const router = useRouter();
 
   const [analysis, setAnalysis] = useState<SajuAnalysisResult | null>(null);
   const [userName, setUserName] = useState("회원");
   const [showPaymentBar, setShowPaymentBar] = useState(false);
+  const [paymentSheetOpen, setPaymentSheetOpen] = useState(false);
   const triggerRef = useRef<HTMLDivElement>(null);
   const fetchedRef = useRef(false);
 
@@ -399,6 +622,55 @@ export default function ServiceResultPage({ config }: { config: LoadedServiceCon
       if (res.ok) {
         const data = (await res.json()) as SajuAnalysisResult;
         setAnalysis(data);
+
+        // Save order to DB (and localStorage as fallback)
+        try {
+          const orderRes = await fetch("/api/orders", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              serviceId,
+              serviceName: service.meta.serviceTitle,
+              name,
+              birthdate: formData.birthdate,
+              birthtime: formData.birthtime,
+              gender: formData.gender || "",
+              questionCount: 0,
+            }),
+          });
+          const orderData = orderRes.ok ? ((await orderRes.json()) as { id: string }) : null;
+          const id = orderData?.id || `${serviceId}_${Date.now()}`;
+
+          // Save saju result to DB
+          if (orderData?.id) {
+            await fetch(`/api/orders/${orderData.id}/result`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ resultJson: data }),
+            }).catch(() => {});
+          }
+
+          // localStorage fallback
+          const existing = JSON.parse(localStorage.getItem("saju_results") || "[]");
+          const entry = {
+            id,
+            serviceId,
+            serviceName: service.meta.serviceTitle,
+            name,
+            birthdate: formData.birthdate,
+            birthtime: formData.birthtime,
+            gender: formData.gender || "",
+            createdAt: new Date().toISOString(),
+            questionCount: 0,
+            paid: false,
+          };
+          const deduped = existing.filter(
+            (r: { serviceId: string; name: string; birthdate: string }) =>
+              !(r.serviceId === serviceId && r.name === name && r.birthdate === formData.birthdate)
+          );
+          deduped.unshift(entry);
+          localStorage.setItem("saju_results", JSON.stringify(deduped.slice(0, 20)));
+        } catch { /* ignore */ }
       }
     } catch (e) {
       console.error("Failed to fetch saju analysis:", e);
@@ -439,6 +711,27 @@ export default function ServiceResultPage({ config }: { config: LoadedServiceCon
 
   const paymentButtonText = replaceTemplate(script.payment.button, vars);
 
+  const handlePayClick = () => setPaymentSheetOpen(true);
+
+  const handlePaymentComplete = async () => {
+    setPaymentSheetOpen(false);
+    try {
+      const results = JSON.parse(localStorage.getItem("saju_results") || "[]");
+      const latest = results.find((r: { serviceId: string }) => r.serviceId === serviceId);
+      if (latest) {
+        // Mark as paid in DB
+        await fetch(`/api/orders/${latest.id}/pay`, { method: "PATCH" }).catch(() => {});
+        // Mark as paid in localStorage
+        latest.paid = true;
+        latest.paidAt = new Date().toISOString();
+        localStorage.setItem("saju_results", JSON.stringify(results));
+        router.push(`/s/${serviceId}/ai/${latest.id}`);
+        return;
+      }
+    } catch { /* ignore */ }
+    router.push(`/s/${serviceId}/ai/${serviceId}_${Date.now()}`);
+  };
+
   return (
     <>
       <ResultHeader />
@@ -447,7 +740,7 @@ export default function ServiceResultPage({ config }: { config: LoadedServiceCon
           {service.resultPage.sections.map((section, i) => (
             <div key={i}>
               {i === triggerIndex && <div ref={triggerRef} />}
-              <SectionRenderer section={section} config={config} vars={vars} analysis={analysis} />
+              <SectionRenderer section={section} config={config} vars={vars} analysis={analysis} onPayClick={handlePayClick} />
             </div>
           ))}
         </div>
@@ -456,8 +749,17 @@ export default function ServiceResultPage({ config }: { config: LoadedServiceCon
           buttonColor={service.theme.cardAccent}
           buttonText={paymentButtonText}
           countdown={paymentBar.countdown}
+          onPayClick={handlePayClick}
         />
       </main>
+      <PaymentSheet
+        open={paymentSheetOpen}
+        onClose={() => setPaymentSheetOpen(false)}
+        serviceTitle={service.meta.serviceTitle}
+        price={service.meta.price ?? 19900}
+        accentColor={service.theme.cardAccent}
+        onComplete={handlePaymentComplete}
+      />
     </>
   );
 }

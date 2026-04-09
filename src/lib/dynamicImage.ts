@@ -20,9 +20,8 @@ export function resolveDynamicImage(
   let path = rule.pattern;
 
   for (const [varName, varDef] of Object.entries(rule.variables)) {
-    // source에서 실제 값 추출
-    const sourceKey = varDef.source.split(".").pop() || "";
-    let value = (vars as unknown as Record<string, string>)[sourceKey] ?? "";
+    // varName을 vars 키로 사용 (SajuImageVars의 필드명과 일치)
+    let value = (vars as unknown as Record<string, string>)[varName] ?? "";
 
     // map이 있으면 값 변환 (예: "남성" → "FEMALE")
     if (varDef.map && value in varDef.map) {

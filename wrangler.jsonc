@@ -15,10 +15,11 @@
       "bucket_name": "astral-saju-cdn"
     }
   ],
-  "kv_namespaces": [
+  "d1_databases": [
     {
-      "binding": "SAJU_KV",
-      "id": "PLACEHOLDER_CREATE_WITH_WRANGLER"
+      "binding": "DB",
+      "database_name": "astral-saju-db",
+      "database_id": "3fdd3a92-1c86-4576-b345-598f03e6723d"
     }
   ]
 }
