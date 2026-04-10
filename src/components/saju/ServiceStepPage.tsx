@@ -20,11 +20,90 @@ import SelectField from "./fields/SelectField";
 import TextareaField from "./fields/TextareaField";
 import { cdnUrl } from "@/lib/cdn";
 
-const TRANSITION_MS = 400;
+const TRANSITION_MS = 350;
 
 /** Resolve an image path from service.json (relative to serviceId) */
 function img(serviceId: string, path: string): string {
   return cdnUrl(resolveServiceImagePath(serviceId, path));
+}
+
+/** Preload an image and resolve when ready (or timeout) */
+function preloadImage(src: string): Promise<void> {
+  return new Promise((resolve) => {
+    const image = new window.Image();
+    image.onload = () => resolve();
+    image.onerror = () => resolve();
+    // Don't wait forever
+    const timer = setTimeout(resolve, 2000);
+    image.onload = () => { clearTimeout(timer); resolve(); };
+    image.onerror = () => { clearTimeout(timer); resolve(); };
+    image.src = src;
+  });
+}
+
+/** Loading screen shown until hero content is ready */
+function HeroLoadingScreen({ visible }: { visible: boolean }) {
+  return (
+    <div
+      className={`absolute inset-0 z-50 flex flex-col items-center justify-center bg-[#111111] transition-opacity duration-500 ${visible ? "opacity-100" : "pointer-events-none opacity-0"}`}
+    >
+      <div className="h-8 w-8 animate-spin rounded-full border-[3px] border-white/20 border-t-white/80" />
+    </div>
+  );
+}
+
+/** Video with poster fallback — shows poster until video can play smoothly */
+function HeroVideo({
+  videoSrc,
+  posterSrc,
+  onPosterReady,
+}: {
+  videoSrc: string;
+  posterSrc: string;
+  onPosterReady: () => void;
+}) {
+  const posterRef = useRef<HTMLImageElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [videoReady, setVideoReady] = useState(false);
+
+  // Check if poster already loaded (cached/preloaded)
+  useEffect(() => {
+    if (posterRef.current?.complete && posterRef.current.naturalWidth > 0) {
+      onPosterReady();
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    const onReady = () => setVideoReady(true);
+    if (v.readyState >= 3) { setVideoReady(true); return; }
+    v.addEventListener("canplaythrough", onReady);
+    return () => v.removeEventListener("canplaythrough", onReady);
+  }, []);
+
+  return (
+    <div className="absolute inset-0 h-full w-full">
+      <img
+        ref={posterRef}
+        src={posterSrc}
+        alt="배경"
+        className={`absolute inset-0 h-full w-full object-cover object-top transition-opacity duration-500 ${videoReady ? "opacity-0" : "opacity-100"}`}
+        onLoad={onPosterReady}
+      />
+      <video
+        ref={videoRef}
+        className={`absolute inset-0 h-full w-full object-cover object-top transition-opacity duration-500 ${videoReady ? "opacity-100" : "opacity-0"}`}
+        muted
+        loop
+        autoPlay
+        playsInline
+        preload="auto"
+      >
+        <source src={videoSrc} type="video/mp4" />
+      </video>
+    </div>
+  );
 }
 
 function SajuHeader() {
@@ -71,6 +150,7 @@ function StepContent({ config }: { config: LoadedServiceConfig }) {
   const [opacity, setOpacity] = useState(1);
   const isTransitioning = useRef(false);
 
+  const [heroLoading, setHeroLoading] = useState(true);
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [calendarType, setCalendarType] = useState<"solar" | "lunar">("solar");
   const [unknownTime, setUnknownTime] = useState(false);
@@ -78,15 +158,40 @@ function StepContent({ config }: { config: LoadedServiceConfig }) {
   useEffect(() => {
     const urlStepId = resolveStepId(stepParam);
     if (urlStepId !== currentStepId && !isTransitioning.current) {
-      setOpacity(0);
-      setTimeout(() => {
-        setCurrentStepId(urlStepId);
-        requestAnimationFrame(() => setOpacity(1));
-      }, TRANSITION_MS);
+      isTransitioning.current = true;
+
+      // Preload first, then transition
+      const nextStep = steps.find((s) => s.id === urlStepId);
+      const preload = nextStep && "bgSrc" in nextStep
+        ? preloadImage(img(serviceId, nextStep.bgSrc as string))
+        : Promise.resolve();
+
+      preload.then(() => {
+        setOpacity(0);
+        setTimeout(() => {
+          setCurrentStepId(urlStepId);
+          requestAnimationFrame(() => {
+            setOpacity(1);
+            isTransitioning.current = false;
+          });
+        }, TRANSITION_MS);
+      });
     }
   }, [stepParam]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const currentStep = steps.find((s) => s.id === currentStepId) ?? steps[0];
+
+  // Eagerly preload adjacent steps' background images
+  useEffect(() => {
+    const adjacentIds = [currentStep.next, "prev" in currentStep ? (currentStep as { prev?: string }).prev : undefined].filter(Boolean) as string[];
+    for (const id of adjacentIds) {
+      if (id === "result") continue;
+      const step = steps.find((s) => s.id === id);
+      if (step && "bgSrc" in step) {
+        preloadImage(img(serviceId, step.bgSrc as string));
+      }
+    }
+  }, [currentStepId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Get CTA text from script.json
   const stepScript = script.steps[currentStep.id];
@@ -95,36 +200,48 @@ function StepContent({ config }: { config: LoadedServiceConfig }) {
   const setField = (key: string, value: string) =>
     setFormData((prev) => ({ ...prev, [key]: value }));
 
-  const goTo = (stepId: string | undefined) => {
+  const goTo = async (stepId: string | undefined) => {
     if (!stepId || isTransitioning.current) return;
     isTransitioning.current = true;
+
+    // For result page, just save and navigate
+    if (stepId === "result") {
+      setOpacity(0);
+      await new Promise((r) => setTimeout(r, TRANSITION_MS));
+      try {
+        sessionStorage.setItem(
+          `saju_form_${serviceId}`,
+          JSON.stringify({ ...formData, calendarType }),
+        );
+      } catch { /* ignore */ }
+      router.push(`${baseUrl}/result`);
+      isTransitioning.current = false;
+      return;
+    }
+
+    // Preload next image FIRST (while current step is still visible)
+    const nextStep = steps.find((s) => s.id === stepId);
+    if (nextStep && "bgSrc" in nextStep) {
+      await preloadImage(img(serviceId, nextStep.bgSrc as string));
+    }
+
+    // Image ready → now do the quick fade transition
     setOpacity(0);
-    setTimeout(() => {
-      if (stepId === "result") {
-        // Save form data to sessionStorage for the result page
-        try {
-          sessionStorage.setItem(
-            `saju_form_${serviceId}`,
-            JSON.stringify({ ...formData, calendarType }),
-          );
-        } catch { /* ignore */ }
-        router.push(`${baseUrl}/result`);
-        isTransitioning.current = false;
-        return;
-      }
-      setCurrentStepId(stepId);
-      const newUrl = stepId === "home" ? baseUrl : `${baseUrl}?step=step_${stepId}`;
-      window.history.pushState(null, "", newUrl);
-      requestAnimationFrame(() => {
-        setOpacity(1);
-        isTransitioning.current = false;
-      });
-    }, TRANSITION_MS);
+    await new Promise((r) => setTimeout(r, TRANSITION_MS));
+
+    setCurrentStepId(stepId);
+    const newUrl = stepId === "home" ? baseUrl : `${baseUrl}?step=step_${stepId}`;
+    window.history.pushState(null, "", newUrl);
+    requestAnimationFrame(() => {
+      setOpacity(1);
+      isTransitioning.current = false;
+    });
   };
 
-  const transitionStyle = {
+  const transitionStyle: React.CSSProperties = {
     opacity,
     transition: `opacity ${TRANSITION_MS}ms ease-in-out`,
+    willChange: "opacity",
   };
 
   // === HERO ===
@@ -132,20 +249,23 @@ function StepContent({ config }: { config: LoadedServiceConfig }) {
     const step = currentStep;
     return (
       <div className="mx-auto h-[100dvh] min-h-[100dvh] w-full max-w-[480px] overflow-hidden text-white relative" style={transitionStyle}>
+        <HeroLoadingScreen visible={heroLoading} />
         <SajuHeader />
         <div className="absolute inset-0 z-0 overflow-hidden bg-[#111111]">
-          <div className="absolute inset-0 h-full w-full">
-            <div className="relative h-full w-full [&>video]:h-full [&>video]:object-cover [&>video]:object-top">
-              {step.bgType === "video" ? (
-                <video className="w-full" muted loop autoPlay playsInline preload="metadata" poster={img(serviceId, step.bgPoster ?? "")}>
-                  <source src={img(serviceId, step.bgSrc)} type="video/mp4" />
-                  <img src={img(serviceId, step.bgPoster ?? "")} alt="배경" className="w-full" />
-                </video>
-              ) : (
-                <img src={img(serviceId, step.bgSrc)} alt="배경" className="absolute inset-0 h-full w-full object-cover" />
-              )}
-            </div>
-          </div>
+          {step.bgType === "video" ? (
+            <HeroVideo
+              videoSrc={img(serviceId, step.bgSrc)}
+              posterSrc={img(serviceId, step.bgPoster ?? "")}
+              onPosterReady={() => setHeroLoading(false)}
+            />
+          ) : (
+            <img
+              src={img(serviceId, step.bgSrc)}
+              alt="배경"
+              className="absolute inset-0 h-full w-full object-cover"
+              onLoad={() => setHeroLoading(false)}
+            />
+          )}
         </div>
         <div className="absolute inset-0 z-20 flex flex-col opacity-100">
           {step.topGradient && (

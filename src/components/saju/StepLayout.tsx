@@ -1,7 +1,59 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, useState, useRef, useEffect } from "react";
 import Image from "next/image";
+
+function BgVideo({ src, poster }: { src: string; poster?: string }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    const onReady = () => setReady(true);
+    if (v.readyState >= 3) { setReady(true); return; }
+    v.addEventListener("canplaythrough", onReady);
+    return () => v.removeEventListener("canplaythrough", onReady);
+  }, []);
+
+  return (
+    <div className="absolute inset-0 h-full w-full">
+      {poster && (
+        <img
+          src={poster}
+          alt="배경"
+          className={`absolute inset-0 h-full w-full object-cover object-top transition-opacity duration-500 ${ready ? "opacity-0" : "opacity-100"}`}
+        />
+      )}
+      <video
+        ref={videoRef}
+        className={`absolute inset-0 h-full w-full object-cover object-top transition-opacity duration-500 ${ready ? "opacity-100" : "opacity-0"}`}
+        muted loop autoPlay playsInline preload="auto"
+      >
+        <source src={src} type="video/mp4" />
+      </video>
+    </div>
+  );
+}
+
+function BgLayer({ bgType, bgSrc, videoPoster }: { bgType: "image" | "video"; bgSrc: string; videoPoster?: string }) {
+  const [loaded, setLoaded] = useState(false);
+  return (
+    <div className="absolute inset-0 z-0 overflow-hidden bg-[#111111]">
+      {bgType === "video" ? (
+        <BgVideo src={bgSrc} poster={videoPoster} />
+      ) : (
+        <img
+          alt="배경"
+          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-150 ${loaded ? "opacity-100" : "opacity-0"}`}
+          src={bgSrc}
+          loading="eager"
+          onLoad={() => setLoaded(true)}
+        />
+      )}
+    </div>
+  );
+}
 
 interface StepLayoutProps {
   bgType: "image" | "video";
@@ -47,37 +99,7 @@ export default function StepLayout({
         </div>
       </header>
       {/* 배경 레이어 */}
-      <div className="absolute inset-0 z-0 overflow-hidden bg-[#111111]">
-        {bgType === "video" ? (
-          <div className="absolute inset-0 h-full w-full">
-            <div className="relative h-full w-full [&>video]:h-full [&>video]:object-cover [&>video]:object-top">
-              <video
-                className="w-full"
-                muted
-                loop
-                autoPlay
-                playsInline
-                preload="metadata"
-                poster={videoPoster}
-              >
-                <source src={bgSrc} type="video/mp4" />
-                <img
-                  src={videoPoster}
-                  alt="배경"
-                  className="w-full"
-                />
-              </video>
-            </div>
-          </div>
-        ) : (
-          <img
-            alt="배경"
-            className="absolute inset-0 h-full w-full object-cover"
-            src={bgSrc}
-            loading="eager"
-          />
-        )}
-      </div>
+      <BgLayer bgType={bgType} bgSrc={bgSrc} videoPoster={videoPoster} />
 
       {/* 콘텐츠 오버레이 */}
       <div className="absolute inset-0 z-20 flex flex-col opacity-100">
