@@ -635,7 +635,11 @@ export default function ServiceResultPage({ config }: { config: LoadedServiceCon
               birthdate: formData.birthdate,
               birthtime: formData.birthtime,
               gender: formData.gender || "",
-              questionCount: 0,
+              calendarType: formData.calendarType || "solar",
+              question: formData.question || null,
+              loveStatus: formData.loveStatus || null,
+              loveDuration: formData.loveDuration || null,
+              questionCount: formData.question ? 1 : 0,
             }),
           });
           const orderData = orderRes.ok ? ((await orderRes.json()) as { id: string }) : null;
@@ -660,8 +664,9 @@ export default function ServiceResultPage({ config }: { config: LoadedServiceCon
             birthdate: formData.birthdate,
             birthtime: formData.birthtime,
             gender: formData.gender || "",
+            calendarType: formData.calendarType || "solar",
             createdAt: new Date().toISOString(),
-            questionCount: 0,
+            questionCount: formData.question ? 1 : 0,
             paid: false,
           };
           const deduped = existing.filter(

@@ -81,11 +81,53 @@ function TextCard({
   text,
   decorations,
   placeholder,
+  loading,
+  error,
+  onRetry,
 }: {
   text?: string;
   decorations: Decorations;
   placeholder?: string;
+  loading?: boolean;
+  error?: string | null;
+  onRetry?: () => void;
 }) {
+  if (loading) {
+    return (
+      <div className="mx-4 my-6">
+        <SajuCard decorations={decorations}>
+          <div className="flex flex-col items-center gap-3 px-6 py-12">
+            <div className="h-5 w-5 animate-spin rounded-full border-2 border-gray-300 border-t-[#8B5CF6]" />
+            <div className="font-pretendard text-sm text-gray-400">
+              맞춤 분석을 생성하고 있습니다...
+            </div>
+          </div>
+        </SajuCard>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="mx-4 my-6">
+        <SajuCard decorations={decorations}>
+          <div className="flex flex-col items-center gap-3 px-6 py-10">
+            <div className="font-pretendard text-sm text-gray-400">{error}</div>
+            {onRetry && (
+              <button
+                type="button"
+                onClick={onRetry}
+                className="rounded-full bg-[#8B5CF6] px-4 py-1.5 font-pretendard text-xs font-medium text-white"
+              >
+                다시 시도
+              </button>
+            )}
+          </div>
+        </SajuCard>
+      </div>
+    );
+  }
+
   if (!text) {
     return (
       <div className="mx-4 my-6">
@@ -178,6 +220,8 @@ export default function PaidResultPage({
   const [tocOpen, setTocOpen] = useState(false);
   const [analysis, setAnalysis] = useState<SajuAnalysisResult | null>(null);
   const [aiTexts, setAiTexts] = useState<AiTextData>({});
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
   const [userName, setUserName] = useState("회원");
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -232,7 +276,7 @@ export default function PaidResultPage({
           birthdate: entry.birthdate,
           birthtime: entry.birthtime,
           gender: entry.gender,
-          calendarType: "solar",
+          calendarType: entry.calendarType || "solar",
         }),
       });
       if (res.ok) setAnalysis(await res.json());
@@ -244,6 +288,67 @@ export default function PaidResultPage({
   useEffect(() => {
     fetchAnalysis();
   }, [fetchAnalysis]);
+
+  // Fetch AI-generated texts (with 202 polling for concurrent requests)
+  const aiFetchedRef = useRef(false);
+  const pollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pollAttemptsRef = useRef(0);
+
+  const fetchAiTexts = useCallback(async () => {
+    setAiLoading(true);
+    setAiError(null);
+
+    try {
+      const res = await fetch(`/api/orders/${orderId}/generate-ai`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (res.status === 401) {
+        setAiError("로그인이 필요합니다.");
+        setAiLoading(false);
+        return;
+      }
+      if (res.status === 402) {
+        setAiError("결제가 필요합니다.");
+        setAiLoading(false);
+        return;
+      }
+      if (res.status === 202) {
+        // 다른 요청이 생성 중 — 5초 후 재시도 (최대 24회 = 2분)
+        if (++pollAttemptsRef.current > 24) {
+          setAiError("생성 시간이 초과되었습니다. 다시 시도해 주세요.");
+          setAiLoading(false);
+          return;
+        }
+        pollTimerRef.current = setTimeout(() => fetchAiTexts(), 5000);
+        return;
+      }
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error((body as { error?: string }).error || `Error ${res.status}`);
+      }
+      const data = await res.json();
+      setAiTexts(data as AiTextData);
+      setAiLoading(false);
+    } catch (e) {
+      console.error("[PaidResultPage] AI text fetch failed:", e);
+      setAiError("맞춤 분석 생성에 실패했습니다.");
+      setAiLoading(false);
+    }
+  }, [orderId]);
+
+  useEffect(() => {
+    if (aiFetchedRef.current) return;
+    aiFetchedRef.current = true;
+    fetchAiTexts();
+    return () => { if (pollTimerRef.current) clearTimeout(pollTimerRef.current); };
+  }, [fetchAiTexts]);
+
+  const retryAiGeneration = useCallback(() => {
+    pollAttemptsRef.current = 0;
+    fetchAiTexts();
+  }, [fetchAiTexts]);
 
   // Scroll to top when page changes
   useEffect(() => {
@@ -343,6 +448,9 @@ export default function PaidResultPage({
             key={idx}
             text={aiTexts[sec.aiKey || ""]}
             decorations={DECORATIONS}
+            loading={aiLoading}
+            error={aiError}
+            onRetry={retryAiGeneration}
             placeholder={`${nameShort}님의 ${getAiKeyLabel(sec.aiKey)} 분석 결과가 여기에 표시됩니다.`}
           />
         );

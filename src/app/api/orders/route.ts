@@ -38,10 +38,13 @@ export async function POST(req: NextRequest) {
     birthdate?: string;
     birthtime?: string;
     gender?: string;
+    calendarType?: string;
     question?: string;
     questionCount?: number;
+    loveStatus?: string;
+    loveDuration?: string;
   };
-  const { serviceId, serviceName, name, birthdate, birthtime, gender, question, questionCount } = body;
+  const { serviceId, serviceName, name, birthdate, birthtime, gender, calendarType, question, questionCount, loveStatus, loveDuration } = body;
 
   if (!serviceId || !name || !birthdate || !birthtime || !gender) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -68,8 +71,8 @@ export async function POST(req: NextRequest) {
   // Create order
   await db
     .prepare(
-      `INSERT INTO orders (id, user_id, service_id, service_name, name, birthdate, birthtime, gender, question, question_count)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      `INSERT INTO orders (id, user_id, service_id, service_name, name, birthdate, birthtime, gender, calendar_type, question, question_count, love_status, love_duration)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     )
     .bind(
       id,
@@ -80,8 +83,11 @@ export async function POST(req: NextRequest) {
       birthdate,
       birthtime,
       gender,
+      calendarType || "solar",
       question || null,
-      questionCount || 0
+      questionCount || 0,
+      loveStatus || null,
+      loveDuration || null
     )
     .run();
 

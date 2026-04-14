@@ -34,9 +34,8 @@ export async function generateAdvancedSajuContext(
   gender: 'male' | 'female',
 ): Promise<string> {
   const hour = birthHour ?? 12;
-  const isMale = gender === 'male';
 
-  // 1. 사주팔자
+  // 사주팔자 계산
   const sajuResult = calculateSaju({
     year: birthYear,
     month: birthMonth,
@@ -46,6 +45,21 @@ export async function generateAdvancedSajuContext(
     gender,
     unknownTime: birthHour === null,
   });
+
+  return generateAdvancedSajuContextFromResult(sajuResult, birthYear, birthMonth, birthDay, birthHour, gender);
+}
+
+/** 이미 계산된 SajuResult로부터 고급 분석 텍스트 생성 (재계산 방지) */
+export async function generateAdvancedSajuContextFromResult(
+  sajuResult: SajuResult,
+  birthYear: number,
+  birthMonth: number,
+  birthDay: number,
+  birthHour: number | null,
+  gender: 'male' | 'female',
+): Promise<string> {
+  const hour = birthHour ?? 12;
+  const isMale = gender === 'male';
 
   const sections = [
     formatPillars(sajuResult),
@@ -58,7 +72,7 @@ export async function generateAdvancedSajuContext(
     formatCurrentYearAnalysis(sajuResult),
   ];
 
-  // 2. 자미두수
+  // 자미두수
   try {
     const ziweiChart = await createChart(birthYear, birthMonth, birthDay, hour, 0, isMale);
     sections.push(await formatZiwei(ziweiChart, birthYear));
@@ -66,7 +80,7 @@ export async function generateAdvancedSajuContext(
     // 자미두수 계산 실패 시 skip
   }
 
-  // 3. 서양 별자리
+  // 서양 별자리
   try {
     const natalChart = await calculateNatal({
       year: birthYear,
