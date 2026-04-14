@@ -2,9 +2,10 @@
 
 import { useState, useCallback } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay } from "swiper/modules";
+import { Autoplay, EffectCards } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
 import "swiper/css";
+import "swiper/css/effect-cards";
 import { cdnUrl } from "@/lib/cdn";
 import type { CarouselSlide } from "@/data/landing";
 
@@ -22,7 +23,7 @@ export default function HeroCarousel({ slides }: HeroCarouselProps) {
 
   const goToSlide = useCallback(
     (index: number) => {
-      swiperRef?.slideToLoop(index);
+      swiperRef?.slideTo(index);
     },
     [swiperRef]
   );
@@ -31,18 +32,18 @@ export default function HeroCarousel({ slides }: HeroCarouselProps) {
     <div className="w-full pt-6">
       <div className="mx-2">
         <Swiper
-          modules={[Autoplay]}
+          modules={[Autoplay, EffectCards]}
+          effect="cards"
+          cardsEffect={{ perSlideOffset: 8, perSlideRotate: 0, rotate: false, slideShadows: false }}
           autoplay={{ delay: 3000, disableOnInteraction: false, pauseOnMouseEnter: false }}
-          speed={500}
-          loop
-          slidesPerView={1}
-          spaceBetween={0}
+          speed={300}
+          grabCursor
           onSwiper={setSwiperRef}
           onRealIndexChange={handleSlideChange}
-          className="hero-carousel w-full overflow-hidden rounded-2xl"
+          className="hero-carousel w-full rounded-2xl"
         >
           {slides.map((slide, i) => (
-            <SwiperSlide key={slide.slug}>
+            <SwiperSlide key={slide.slug} className="rounded-2xl">
               <a className="relative block w-full" href={slide.href}>
                 <img
                   className="aspect-[224/280] w-full rounded-2xl object-cover"
@@ -64,16 +65,20 @@ export default function HeroCarousel({ slides }: HeroCarouselProps) {
       </div>
 
       {/* 도트 인디케이터 — 캐러셀 아래 */}
-      <div className="mt-4 flex items-center justify-center gap-1">
+      <div className="pointer-events-none mt-4 flex items-center justify-center gap-1">
         {slides.map((_, i) => (
           <button
             key={i}
             onClick={() => goToSlide(i)}
             aria-label={`${i + 1}번째 배너로 이동`}
-            className={`h-2 w-2 cursor-pointer rounded-full transition-all duration-300 ${
-              activeIndex === i ? "bg-[#111111]" : "bg-[#D9D9D9]"
-            }`}
-          />
+            className="pointer-events-auto flex h-4 w-4 cursor-pointer items-center justify-center transition-all duration-300"
+          >
+            <span
+              className={`h-1.5 w-1.5 rounded-full transition-colors duration-300 ${
+                activeIndex === i ? "bg-[#111111]" : "bg-[#E1E1E1]"
+              }`}
+            />
+          </button>
         ))}
       </div>
     </div>

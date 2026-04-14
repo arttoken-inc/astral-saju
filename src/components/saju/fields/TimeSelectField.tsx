@@ -52,6 +52,7 @@ export default function TimeSelectField({
           className="w-full appearance-none font-pretendard text-base leading-none tracking-[-2.5%] placeholder:text-[#757575] focus:outline-none h-10 border-b border-b-[#E1E1E1] bg-transparent px-1 font-medium text-[#757575] rounded-none"
           value={value}
           onChange={(e) => onChange(e.target.value)}
+          onFocus={(e) => e.target.showPicker?.()}
           disabled={unknownTime}
         >
           {options.map((opt) => (
